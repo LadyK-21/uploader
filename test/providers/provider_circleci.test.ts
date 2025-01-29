@@ -13,29 +13,29 @@ describe('CircleCI Params', () => {
     it('does not run without CircleCI env variable', () => {
       const inputs: UploaderInputs = {
         args: {...createEmptyArgs(), },
-        environment: {},
+        envs: {},
       }
-      const detected = providerCircleci.detect(inputs.environment)
+      const detected = providerCircleci.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with CircleCI env variable', () => {
       const inputs: UploaderInputs = {
         args: {...createEmptyArgs(), },
-        environment: {
+        envs: {
           CI: 'true',
           CIRCLECI: 'true',
         },
       }
-      const detected = providerCircleci.detect(inputs.environment)
+      const detected = providerCircleci.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params', () => {
+  it('gets correct params', async () => {
     const inputs: UploaderInputs = {
       args: {...createEmptyArgs(), },
-      environment: {
+      envs: {
         CI: 'true',
         CIRCLECI: 'true',
         CIRCLE_BRANCH: 'master',
@@ -58,14 +58,14 @@ describe('CircleCI Params', () => {
       service: 'circleci',
       slug: 'testOrg/testRepo',
     }
-    const params = providerCircleci.getServiceParams(inputs)
+    const params = await providerCircleci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct slug when empty reponame', () => {
+  it('gets correct slug when empty reponame', async () => {
     const inputs: UploaderInputs = {
       args: {...createEmptyArgs(), },
-      environment: {
+      envs: {
         CI: 'true',
         CIRCLECI: 'true',
         CIRCLE_BRANCH: 'master',
@@ -87,7 +87,7 @@ describe('CircleCI Params', () => {
       service: 'circleci',
       slug: 'testOrg/testRepo',
     }
-    const params = providerCircleci.getServiceParams(inputs)
+    const params = await providerCircleci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

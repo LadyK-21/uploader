@@ -4,10 +4,10 @@ import fs from 'fs'
 import { readFile } from 'fs/promises'
 import { posix as path } from 'path'
 import { UploaderArgs } from '../types'
-import { logError, UploadLogger } from './logger'
+import { info, logError, UploadLogger } from './logger'
 import { runExternalProgram } from './util'
 import micromatch from "../vendor/micromatch/index.js";
-import { SPAWNPROCESSBUFFERSIZE } from './constansts'
+import { SPAWNPROCESSBUFFERSIZE } from './constants'
 
 export const MARKER_NETWORK_END = '\n<<<<<< network\n'
 export const MARKER_FILE_END = '<<<<<< EOF\n'
@@ -85,6 +85,7 @@ function globBlocklist(): string[] {
     '*.exe',
     '*.ftl',
     '*.gif',
+    '*.go',
     '*.gradle',
     '*.gz',
     '*.h',
@@ -100,6 +101,7 @@ function globBlocklist(): string[] {
     '*.m4',
     '*.mak*',
     '*.map',
+    '*.marker',
     '*.md',
     '*.o',
     '*.p12',
@@ -151,6 +153,8 @@ function globBlocklist(): string[] {
     'test_*_coverage.txt',
     'testrunner-coverage*',
     '*.*js',
+    '.yarn',
+    '*.zip',
   ]
 }
 
@@ -163,7 +167,7 @@ export function coverageFilePatterns(): string[] {
     'report.xml',
     '*.codecov.!(exe)',
     'codecov.!(exe)',
-    'cobertura.xml',
+    '*cobertura.xml',
     'excoveralls.json',
     'luacov.report.out',
     'coverage-final.json',
@@ -193,6 +197,7 @@ const isNegated = (path: string) => path.startsWith('!')
 export async function getCoverageFiles(
   projectRoot: string,
   coverageFilePatterns: string[],
+  followSymbolicLinks: boolean = true,
 ): Promise<string[]> {
   const globstar = (pattern: string) => `**/${pattern}`
 
@@ -210,16 +215,20 @@ export async function getCoverageFiles(
   }), {
     cwd: projectRoot,
     dot: true,
+    followSymbolicLinks,
     ignore: getBlocklist(),
+    suppressErrors: true,
   })
 }
 
-export function fetchGitRoot(): string {
+export function fetchGitRoot(useCwd: boolean): string {
+  const currentWorkingDirectory = process.cwd()
   try {
-    return (
-      runExternalProgram('git', ['rev-parse', '--show-toplevel'])) || process.cwd()
+    const gitRoot = runExternalProgram('git', ['rev-parse', '--show-toplevel'])
+    return (gitRoot != "" && !useCwd ? gitRoot : currentWorkingDirectory)
   } catch (error) {
-    throw new Error(`Error fetching git root. Please try using the -R flag. ${error}`)
+    info(`Error fetching git root. Defaulting to ${currentWorkingDirectory}. Please try using the -R flag. ${error}`)
+    return currentWorkingDirectory
   }
 }
 
@@ -249,6 +258,7 @@ export function getAllFiles(
       .sync(['**/*', '**/.[!.]*'], {
         cwd: dirPath,
         ignore: manualBlocklist().map(globstar),
+        suppressErrors: true,
       })
   } else {
     files = stdout.split(/[\r\n]+/)
@@ -312,7 +322,8 @@ export function getFilePath(projectRoot: string, filePath: string): string {
     filePath.startsWith('./') ||
     filePath.startsWith('/') ||
     filePath.startsWith('.\\') ||
-    filePath.startsWith('.\\')
+    filePath.startsWith('.\\') ||
+    /^[A-Z]:\\\S*/.test(filePath) // This line is here to handle Windows drive letter absolute paths such as "C:\<path>"
   ) {
     return filePath
   }
@@ -339,7 +350,7 @@ export function getBlocklist(): string[] {
 }
 
 export function filterFilesAgainstBlockList(paths: string[], ignoreGlobs: string[]): string[] {
-  return micromatch.not(paths, ignoreGlobs, {windows: true})
+  return micromatch.not(paths, ignoreGlobs, { windows: true })
 }
 
 export function cleanCoverageFilePaths(projectRoot: string, paths: string[]): string[] {

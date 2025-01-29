@@ -1,7 +1,5 @@
 import childprocess from 'child_process'
-import { SPAWNPROCESSBUFFERSIZE } from './constansts'
-export { SPAWNPROCESSBUFFERSIZE } from './constansts'
-
+import { SPAWNPROCESSBUFFERSIZE } from './constants'
 
 
 export function isProgramInstalled(programName: string): boolean {
@@ -34,3 +32,5 @@ export function argAsArray<T>(args?: T | T[]): T[] {
   }
   return result.concat(args)
 }
+
+export function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)); }

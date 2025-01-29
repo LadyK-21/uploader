@@ -3,7 +3,7 @@ import fs from 'fs'
 import childProcess from 'child_process'
 import * as fileHelpers from '../../src/helpers/files'
 import { getBlocklist } from '../../src/helpers/files'
-import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/util'
+import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/constants'
 import mock from 'mock-fs'
 
 describe('File Helpers', () => {
@@ -27,21 +27,31 @@ describe('File Helpers', () => {
   it('can fetch the git root', () => {
     const cwd = td.replace(process, 'cwd')
     const spawnSync = td.replace(childProcess, 'spawnSync')
-    td.when(cwd()).thenReturn({ stdout: 'fish' })
+    td.when(cwd()).thenReturn('fish')
     td.when(
       spawnSync('git', ['rev-parse', '--show-toplevel'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'gitRoot' })
+    ).thenReturn({ stdout: Buffer.from('gitRoot') })
 
-    expect(fileHelpers.fetchGitRoot()).toBe('gitRoot')
+    expect(fileHelpers.fetchGitRoot(false)).toBe('gitRoot')
   })
 
-  it('errors when it cannot fetch the git root', () => {
+  it('returns cwd when it cannot fetch the git root', () => {
     const cwd = td.replace(process, 'cwd')
     td.replace(childProcess, 'spawnSync')
-    td.when(cwd()).thenReturn({ stdout: 'fish' })
-    expect(() => {
-      fileHelpers.fetchGitRoot()
-    }).toThrow()
+    td.when(cwd()).thenReturn('fish')
+    expect(fileHelpers.fetchGitRoot(false)).toEqual('fish')
+  })
+
+  it('returns cwd when its input is true even if it can fetch the git root', () => {
+    const cwd = td.replace(process, 'cwd')
+    const spawnSync = td.replace(childProcess, 'spawnSync')
+    td.when(cwd()).thenReturn('CWD')
+    td.when(
+      spawnSync('git', ['rev-parse', '--show-toplevel'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
+    ).thenReturn({ stdout: Buffer.from('gitRoot') })
+
+    expect(fileHelpers.fetchGitRoot(true)).toEqual('CWD')
+
   })
 
   it('can get a file listing', async () => {
@@ -54,7 +64,7 @@ describe('File Helpers', () => {
       }
     })
     expect(
-      await fileHelpers.getFileListing('.', { flags: '', verbose: 'true', slug: '',upstream: '' }),
+      await fileHelpers.getFileListing('.', { flags: '', verbose: 'true', slug: '', upstream: '' }),
     ).toBe(files.join('\n'))
   })
 
@@ -226,6 +236,7 @@ describe('File Helpers', () => {
       expect(results).not.toContain('codecov.exe')
 
       expect(results).toContain('test/fixtures/other/fake.codecov.txt')
+      expect(results).toContain('test/fixtures/codecov_demobox_2023-02-27_01-03-34.cobertura.xml')
     })
 
     it('can return a list of coverage files with a pattern', async () => {
@@ -278,6 +289,11 @@ describe('File Helpers', () => {
       it('should return path when project root is . and filepath starts /', () => {
         expect(fileHelpers.getFilePath('.', '/usr/coverage.xml')).toEqual(
           '/usr/coverage.xml',
+        )
+      })
+      it('should return path when file path starts with Windows letter drive', () => {
+        expect(fileHelpers.getFilePath('.', 'C:\Users\circleci\project\coverage\cobertura-coverage.xml')).toEqual(
+          'C:\Users\circleci\project\coverage\cobertura-coverage.xml',
         )
       })
     })

@@ -1,8 +1,8 @@
 import td from 'testdouble'
 import childProcess from 'child_process'
 
-import * as providerJenkinsci from '../../src/ci_providers//provider_jenkinsci'
-import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/util'
+import * as providerJenkinsci from '../../src/ci_providers/provider_jenkinsci'
+import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/constants'
 import { IServiceParams, UploaderInputs } from '../../src/types'
 import { createEmptyArgs } from '../test_helpers'
 
@@ -15,32 +15,32 @@ describe('Jenkins CI Params', () => {
     it('does not run without JenkinsCI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      let detected = providerJenkinsci.detect(inputs.environment)
+      let detected = providerJenkinsci.detect(inputs.envs)
       expect(detected).toBeFalsy()
 
-      inputs.environment.JENKINS_URL = ''
-      detected = providerJenkinsci.detect(inputs.environment)
+      inputs.envs.JENKINS_URL = ''
+      detected = providerJenkinsci.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with JenkinsCI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           JENKINS_URL: 'https://example.jenkins.com',
         },
       }
-      const detected = providerJenkinsci.detect(inputs.environment)
+      const detected = providerJenkinsci.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params on push', () => {
+  it('gets correct params on push', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         BUILD_NUMBER: '1',
         BUILD_URL: 'https://example.jenkins.com',
         CHANGE_ID: '2',
@@ -62,15 +62,15 @@ describe('Jenkins CI Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: '' })
-    const params = providerJenkinsci.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('') })
+    const params = await providerJenkinsci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('can get the slug from git config', () => {
+  it('can get the slug from git config', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         BUILD_NUMBER: '1',
         BUILD_URL: 'https://example.jenkins.com',
         CHANGE_ID: '2',
@@ -82,13 +82,13 @@ describe('Jenkins CI Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'https://github.com/testOrg/testRepo.git' })
+    ).thenReturn({ stdout: Buffer.from('https://github.com/testOrg/testRepo.git') })
 
-    const params = providerJenkinsci.getServiceParams(inputs)
+    const params = await providerJenkinsci.getServiceParams(inputs)
     expect(params.slug).toBe('testOrg/testRepo')
   })
 
-  it('gets correct params for overrides', () => {
+  it('gets correct params for overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -100,7 +100,7 @@ describe('Jenkins CI Params', () => {
           slug: 'testOrg/testRepo',
         },
       },
-      environment: {
+      envs: {
         JENKINS_URL: 'https://example.com',
       },
     }
@@ -115,7 +115,7 @@ describe('Jenkins CI Params', () => {
       slug: 'testOrg/testRepo',
     }
 
-    const params = providerJenkinsci.getServiceParams(inputs)
+    const params = await providerJenkinsci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

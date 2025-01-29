@@ -1,10 +1,10 @@
 import td from 'testdouble'
 import childProcess from 'child_process'
-import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/util'
+import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/constants'
 import { IServiceParams, UploaderInputs } from '../../src/types'
 import { createEmptyArgs } from '../test_helpers'
 
-const providerHerokuci = require('../../src/ci_providers//provider_herokuci')
+import * as providerHerokuci from '../../src/ci_providers/provider_herokuci'
 
 describe('HerokuCI Params', () => {
   afterEach(() => {
@@ -15,30 +15,30 @@ describe('HerokuCI Params', () => {
     it('does not run without HerokuCI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerHerokuci.detect(inputs.environment)
+      const detected = providerHerokuci.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with Herokuci env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
           HEROKU_TEST_RUN_BRANCH: 'test',
         },
       }
-      const detected = providerHerokuci.detect(inputs.environment)
+      const detected = providerHerokuci.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
   // This should test that the provider outputs proper default values
-  it('gets the correct params on no env variables', () => {
+  it('gets the correct params on no env variables', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {},
+      envs: {},
     }
     const expected: IServiceParams = {
       branch: '',
@@ -53,16 +53,16 @@ describe('HerokuCI Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: '' })
-    const params = providerHerokuci.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('') })
+    const params = await providerHerokuci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
   // This should test that the provider outputs proper parameters when a push event is created
-  it('gets the correct params on push', () => {
+  it('gets the correct params on push', async () => {
     const inputs: UploaderInputs = {
       args: { tag: '', url: '', source: '', flags: '', slug: '', upstream: '' },
-      environment: {
+      envs: {
         CI: 'true',
         HEROKU_TEST_RUN_BRANCH: 'testBranch',
         HEROKU_TEST_RUN_COMMIT_VERSION: 'testSha',
@@ -82,13 +82,13 @@ describe('HerokuCI Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'https://github.com/testOrg/testRepo.git' })
-    const params = providerHerokuci.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('https://github.com/testOrg/testRepo.git') })
+    const params = await providerHerokuci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
   // This should test that the provider outputs proper parameters when given overrides
-  it('gets the correct params on overrides', () => {
+  it('gets the correct params on overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -100,7 +100,7 @@ describe('HerokuCI Params', () => {
           slug: 'testOrg/testRepo',
         },
       },
-      environment: {},
+      envs: {},
     }
     const expected: IServiceParams = {
       branch: 'branch',
@@ -112,7 +112,7 @@ describe('HerokuCI Params', () => {
       service: 'heroku',
       slug: 'testOrg/testRepo',
     }
-    const params = providerHerokuci.getServiceParams(inputs)
+    const params = await providerHerokuci.getServiceParams(inputs)
     expect(expected).toBeTruthy()
     expect(params).toMatchObject(expected)
   })

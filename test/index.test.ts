@@ -12,8 +12,9 @@ import * as app from '../src'
 
 import { version } from '../package.json'
 import { UploadLogger } from '../src/helpers/logger'
-import { detectProvider } from '../src/helpers/provider'
+import * as providerHelpers from '../src/helpers/provider'
 import * as webHelpers from '../src/helpers/web'
+import { IServiceParams, UploaderArgs, } from '../src/types'
 
 // Backup the env
 const realEnv = { ...process.env }
@@ -77,8 +78,8 @@ describe('Uploader Core', () => {
       upstream: '',
       url: 'https://codecov.io',
     }
-    const inputs = { args, environment: process.env }
-    const serviceParams = detectProvider(inputs, args.token != '')
+    const inputs = { args, envs: process.env }
+    const serviceParams = await providerHelpers.detectProvider(inputs, args.token != '')
     const buildParams = webHelpers.populateBuildParams(inputs, serviceParams)
     const query = webHelpers.generateQuery(buildParams)
 
@@ -91,11 +92,11 @@ describe('Uploader Core', () => {
     mockClient.intercept({
       method: 'PUT',
       path: '/',
-    }).reply(200, 'success')
+    }).reply(200, 'processing')
 
     const result = await app.main(args)
     expect(result).toEqual({
-      status: 'success',
+      status: 'processing',
       resultURL: 'https://results.codecov.io/',
     })
   }, 30000)
@@ -132,7 +133,7 @@ describe('Uploader Core', () => {
       jest.clearAllMocks()
     })
 
-    it('Can upload without token', async () => {
+    it('Can upload without token if slug is passed', async () => {
       jest.spyOn(process, 'exit')
       const log = jest.spyOn(console, 'log').mockImplementation(() => {
         // intentionally empty
@@ -143,11 +144,42 @@ describe('Uploader Core', () => {
         dryRun: 'true',
         env: 'SOMETHING,ANOTHER',
         flags: '',
-        slug: '',
+        slug: 'codecov/uploader',
         upstream: ''
       })
       expect(log).toHaveBeenCalledWith(
         expect.stringMatching('-> No token specified or token is empty'),
+      )
+    })
+
+    it('Cannot upload without token if slug is not passed', async () => {
+      const f = () => app.main({
+        name: 'customname',
+        url: 'https://codecov.io',
+        dryRun: 'true',
+        env: 'SOMETHING,ANOTHER',
+        flags: '',
+        slug: '',
+        upstream: ''
+      })
+
+      const detectProvider = td.replace(providerHelpers, 'detectProvider')
+      async function buildParams(): Promise<Partial<IServiceParams>> {
+        return await {
+          branch: '',
+          build: '',
+          buildURL: '',
+          commit: 'testSHA',
+          job: '',
+          pr: '',
+          service: 'no service',
+          slug: '',
+        }
+      }
+      td.when(detectProvider(td.matchers.anything(), false)).thenReturn(buildParams())
+
+      await expect(f()).rejects.toThrow(
+        'Slug must be set if a token is not passed',
       )
     })
   })
@@ -166,8 +198,8 @@ describe('Uploader Core', () => {
         slug: '',
         upstream: ''
       }
-      const inputs = { args, environment: process.env }
-      const serviceParams = detectProvider(inputs, args.token != '')
+      const inputs = { args, envs: process.env }
+      const serviceParams = await providerHelpers.detectProvider(inputs, args.token != '')
       const buildParams = webHelpers.populateBuildParams(inputs, serviceParams)
       const query = webHelpers.generateQuery(buildParams)
 
@@ -180,11 +212,11 @@ describe('Uploader Core', () => {
       mockClient.intercept({
         method: 'PUT',
         path: '/',
-      }).reply(200, 'success')
+      }).reply(200, 'processing')
 
       const result = await app.main(args)
       expect(result).toEqual({
-        status: 'success',
+        status: 'processing',
         resultURL: 'https://results.codecov.io/',
       })
     }, 30000)
@@ -195,7 +227,7 @@ describe('Uploader Core', () => {
     process.env.CIRCLECI = 'true'
 
     const parent = '2x4bqz123abc'
-    const args = {
+    const args: UploaderArgs = {
       token: 'abcdefg',
       url: 'https://codecov.io',
       parent,
@@ -203,8 +235,8 @@ describe('Uploader Core', () => {
       slug: '',
       upstream: ''
     }
-    const inputs = { args, environment: process.env }
-    const serviceParams = detectProvider(inputs, args.token != '')
+    const inputs = { args, envs: process.env }
+    const serviceParams = await providerHelpers.detectProvider(inputs, args.token != '')
     const buildParams = webHelpers.populateBuildParams(inputs, serviceParams)
     const query = webHelpers.generateQuery(buildParams)
 
@@ -217,11 +249,11 @@ describe('Uploader Core', () => {
     mockClient.intercept({
       method: 'PUT',
       path: '/',
-    }).reply(200, 'success')
+    }).reply(200, 'processing')
 
     const result = await app.main(args)
     expect(result).toEqual({
-      status: 'success',
+      status: 'processing',
       resultURL: 'https://results.codecov.io/',
     })
   }, 30000)
@@ -300,6 +332,31 @@ describe('Uploader Core', () => {
         'test/fixtures/other/coverage.txt',
         'test/does/not/exist.txt',
       ],
+      name: 'customname',
+      token: 'abcdefg',
+      url: 'https://codecov.io',
+      flags: '',
+      slug: '',
+      upstream: ''
+    })
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(/Processing.*test\/fixtures\/coverage\.txt\.\.\./),
+    )
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(/Processing.*test\/fixtures\/other\/coverage\.txt\.\.\./),
+    )
+    expect(log).not.toHaveBeenCalledWith(
+      expect.stringMatching(/Processing.*test\/does\/not\/exist\.txt\.\.\./),
+    )
+  })
+
+  it('Can find multiple specified files as comma-separated', async () => {
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {
+      // intentionally empty
+    })
+    await app.main({
+      dryRun: 'true',
+      file: 'test/fixtures/coverage.txt,test/fixtures/other/coverage.txt,test/does/not/exist.txt',
       name: 'customname',
       token: 'abcdefg',
       url: 'https://codecov.io',
@@ -483,5 +540,52 @@ describe('Uploader Core', () => {
     expect(console.log).not.toHaveBeenCalledWith(
       expect.stringMatching(/<<<<<< network/),
     )
+  })
+
+  it('Can create fixes', async () => {
+    await app.main({
+      name: 'customname',
+      token: 'abcdefg',
+      url: 'https://codecov.io',
+      dryRun: 'true',
+      feature: 'fixes',
+      flags: '',
+      slug: '',
+      upstream: ''
+    })
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringMatching(/# path=fixes\ntest\/fixtures\/fixes\/example.go:2,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,23,24,25,27,28,29,32,34\ntest\/fixtures\/fixes\/example.php:4,6,11,15,19,20\ntest\/fixtures\/gcov\/main.c:2,4,11,12,13,14,16,20\n<<<<<< EOF/)
+    )
+  })
+
+  it('Can create upload the full report', async () => {
+    await app.main({
+      name: 'customname',
+      token: 'abcdefg',
+      url: 'https://codecov.io',
+      dryRun: 'true',
+      feature: 'fixes',
+      flags: '',
+      slug: '',
+      upstream: '',
+      fullReport: 'test/fixtures/coverage.txt'
+    })
+    expect(console.log).not.toHaveBeenCalledWith(
+      expect.stringMatching(/Searching for coverage files.../)
+    )
+  })
+
+  it('Can error if full report is not a real file', async () => {
+    await expect(app.main({
+      name: 'customname',
+      token: 'abcdefg',
+      url: 'https://codecov.io',
+      dryRun: 'true',
+      feature: 'fixes',
+      flags: '',
+      slug: '',
+      upstream: '',
+      fullReport: 'test/fixtures/fakefile.txt'
+    })).rejects.toThrowError(/Error uploading to Codecov: Path to test\/fixtures\/fakefile.txt does not exist and no coverage report could be upload/)
   })
 })

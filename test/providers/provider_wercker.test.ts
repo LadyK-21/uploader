@@ -13,29 +13,29 @@ describe('Wercker CI Params', () => {
     it('does not run without Wercker CI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerWercker.detect(inputs.environment)
+      const detected = providerWercker.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with Wercker CI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
           WERCKER_MAIN_PIPELINE_STARTED: 'true',
         },
       }
-      const detected = providerWercker.detect(inputs.environment)
+      const detected = providerWercker.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params on push', () => {
+  it('gets correct params on push', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'true',
         WERCKER_MAIN_PIPELINE_STARTED: '1',
         WERCKER_GIT_BRANCH: 'main',
@@ -55,11 +55,11 @@ describe('Wercker CI Params', () => {
       service: 'wercker',
       slug: 'testOrg/testRepo',
     }
-    const params = providerWercker.getServiceParams(inputs)
+    const params = await providerWercker.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct params for overrides', () => {
+  it('gets correct params for overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -71,7 +71,7 @@ describe('Wercker CI Params', () => {
           slug: 'testOrg/testRepo',
         },
       },
-      environment: {
+      envs: {
         CI: 'true',
         WERCKER_MAIN_PIPELINE_STARTED: '1',
         WERCKER_GIT_BRANCH: 'main',
@@ -92,7 +92,7 @@ describe('Wercker CI Params', () => {
       slug: 'testOrg/testRepo',
     }
 
-    const params = providerWercker.getServiceParams(inputs)
+    const params = await providerWercker.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

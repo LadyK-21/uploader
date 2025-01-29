@@ -13,29 +13,29 @@ describe('Cirrus Params', () => {
     it('does not run without Cirrus env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerCirrus.detect(inputs.environment)
+      const detected = providerCirrus.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with Cirrus env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
           CIRRUS_CI: 'true',
         },
       }
-      const detected = providerCirrus.detect(inputs.environment)
+      const detected = providerCirrus.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params', () => {
+  it('gets correct params', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'true',
         CIRRUS_CI: 'true',
         CIRRUS_BRANCH: 'master',
@@ -56,11 +56,11 @@ describe('Cirrus Params', () => {
       service: 'cirrus-ci',
       slug: 'testOrg/testRepo',
     }
-    const params = providerCirrus.getServiceParams(inputs)
+    const params = await providerCirrus.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct params for overrides', () => {
+  it('gets correct params for overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -72,7 +72,7 @@ describe('Cirrus Params', () => {
           slug: 'testOrg/testRepo',
         },
       },
-      environment: {
+      envs: {
         CI: 'true',
         CIRRUS_CI: 'true',
         CIRRUS_BRANCH: 'master',
@@ -94,7 +94,7 @@ describe('Cirrus Params', () => {
       slug: 'testOrg/testRepo',
     }
 
-    const params = providerCirrus.getServiceParams(inputs)
+    const params = await providerCirrus.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

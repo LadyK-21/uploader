@@ -13,46 +13,46 @@ describe('AppveyorCI Params', () => {
     it('does not run without AppveyorCI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      let detected = providerAppveyorci.detect(inputs.environment)
+      let detected = providerAppveyorci.detect(inputs.envs)
       expect(detected).toBeFalsy()
 
-      inputs.environment.CI = 'true'
-      detected = providerAppveyorci.detect(inputs.environment)
+      inputs.envs.CI = 'true'
+      detected = providerAppveyorci.detect(inputs.envs)
       expect(detected).toBeFalsy()
 
-      inputs.environment.CI = 'True'
-      detected = providerAppveyorci.detect(inputs.environment)
+      inputs.envs.CI = 'True'
+      detected = providerAppveyorci.detect(inputs.envs)
       expect(detected).toBeFalsy()
 
-      inputs.environment.CI = 'false'
-      inputs.environment.APPVEYOR = 'true'
-      detected = providerAppveyorci.detect(inputs.environment)
+      inputs.envs.CI = 'false'
+      inputs.envs.APPVEYOR = 'true'
+      detected = providerAppveyorci.detect(inputs.envs)
       expect(detected).toBeFalsy()
 
-      inputs.environment.APPVEYOR = 'True'
-      detected = providerAppveyorci.detect(inputs.environment)
+      inputs.envs.APPVEYOR = 'True'
+      detected = providerAppveyorci.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with AppveyorCI env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
           APPVEYOR: 'true',
         },
       }
-      const detected = providerAppveyorci.detect(inputs.environment)
+      const detected = providerAppveyorci.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params on push', () => {
+  it('gets correct params on push', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         APPVEYOR: 'true',
         APPVEYOR_ACCOUNT_NAME: 'testOrg',
         APPVEYOR_BUILD_ID: '2',
@@ -76,14 +76,14 @@ describe('AppveyorCI Params', () => {
       service: 'appveyor',
       slug: 'testOrg/testRepo',
     }
-    const params = providerAppveyorci.getServiceParams(inputs)
+    const params = await providerAppveyorci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct params for PRs', () => {
+  it('gets correct params for PRs', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         APPVEYOR: 'true',
         APPVEYOR_ACCOUNT_NAME: 'testOrg',
         APPVEYOR_BUILD_ID: '2',
@@ -109,11 +109,11 @@ describe('AppveyorCI Params', () => {
       service: 'appveyor',
       slug: 'testOrg/testRepo',
     }
-    const params = providerAppveyorci.getServiceParams(inputs)
+    const params = await providerAppveyorci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct params for overrides', () => {
+  it('gets correct params for overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -125,7 +125,7 @@ describe('AppveyorCI Params', () => {
           slug: 'testOrg/testRepo',
         },
       },
-      environment: {
+      envs: {
         APPVEYOR: 'true',
         CI: 'true',
       },
@@ -141,7 +141,7 @@ describe('AppveyorCI Params', () => {
       slug: 'testOrg/testRepo',
     }
 
-    const params = providerAppveyorci.getServiceParams(inputs)
+    const params = await providerAppveyorci.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

@@ -1,10 +1,11 @@
 import { UploaderArgs, UploaderInputs } from './types'
 
+import fs from 'fs'
 import zlib from 'zlib'
 import { version } from '../package.json'
 import { detectProvider } from './helpers/provider'
 import * as webHelpers from './helpers/web'
-import { info, logError, UploadLogger } from './helpers/logger'
+import { info, UploadLogger } from './helpers/logger'
 import { getToken } from './helpers/token'
 import {
   cleanCoverageFilePaths,
@@ -23,9 +24,12 @@ import {
   removeFile,
 } from './helpers/files'
 import { generateCoveragePyFile } from './helpers/coveragepy'
+import { generateFixes, FIXES_HEADER } from './helpers/fixes'
 import { generateGcovCoverageFiles } from './helpers/gcov'
+import { generateSwiftCoverageFiles } from './helpers/swift'
 import { generateXcodeCoverageFiles } from './helpers/xcode'
 import { argAsArray } from './helpers/util'
+import { checkSlug, validateFlags } from './helpers/validate'
 
 /**
  *
@@ -58,16 +62,18 @@ function dryRun(
  * @param {string} args.branch Specify the branch manually
  * @param {string} args.dir Directory to search for coverage reports.
  * @param {string} args.env Specify environment variables to be included with this build
- * @param {string} args.sha Specify the commit SHA mannually
+ * @param {string} args.sha Specify the commit SHA manually
  * @param {string} args.file Target file(s) to upload
  * @param {string} args.flags Flag the upload to group coverage metrics
  * @param {string} args.name Custom defined name of the upload. Visible in Codecov UI
  * @param {string} args.networkFilter Specify a filter on the files listed in the network section of the Codecov report. Useful for upload-specific path fixing
  * @param {string} args.networkPrefix Specify a prefix on files listed in the network section of the Codecov report. Useful to help resolve path fixing
  * @param {string} args.parent The commit SHA of the parent for which you are uploading coverage.
- * @param {string} args.pr Specify the pull request number mannually
+ * @param {string} args.pr Specify the pull request number manually
  * @param {string} args.token Codecov upload token
  * @param {string} args.tag Specify the git tag
+ * @param {boolean} args.swift Specify whether to use swift conversion
+ * @param {string} args.swiftProject Specific swift project to convert
  * @param {boolean} args.verbose Run with verbose logging
  * @param {string} args.rootDir Specify the project root directory when not in a git repo
  * @param {boolean} args.nonZero Should errors exit with a non-zero (default: false)
@@ -77,6 +83,7 @@ function dryRun(
  * @param {boolean} args.clean Move discovered coverage reports to the trash
  * @param {string} args.feature Toggle features
  * @param {string} args.source Track wrappers of the uploader
+ * @param {string} args.useCwd Use current working directory as the automatically detected project root
  */
 export async function main(
   args: UploaderArgs,
@@ -107,7 +114,7 @@ export async function main(
   // TODO: clean and sanitize envs and args
   const envs = process.env
   // args
-  const inputs: UploaderInputs = { args, environment: envs }
+  const inputs: UploaderInputs = { args, envs }
 
   let uploadHost: string
   if (args.url) {
@@ -118,9 +125,18 @@ export async function main(
 
   info(generateHeader(getVersion()))
 
+  let flags: string[]
+  if (typeof args.flags === 'object') {
+    flags = [...args.flags]
+  } else {
+    flags = String(args.flags || '').split(',')
+  }
+
+  validateFlags(flags)
+
   // #endregion
   // #region == Step 2: detect if we are in a git repo
-  const projectRoot = args.rootDir || fetchGitRoot()
+  const projectRoot = args.rootDir || fetchGitRoot(args.useCwd || false)
   if (projectRoot === '') {
     info(
       '=> No git repo detected. Please use the -R flag if the below detected directory is not correct.',
@@ -140,163 +156,204 @@ export async function main(
   // #region == Step 4: get network
   const uploadFileChunks: Buffer[] = []
 
-  if (!args.feature || args.feature.split(',').includes('network') === false) {
-    UploadLogger.verbose('Start of network processing...')
-    let fileListing = ''
+  if (!args.fullReport) {
+    if (!args.feature || args.feature.split(',').includes('network') === false) {
+      UploadLogger.verbose('Start of network processing...')
+      let fileListing = ''
+      try {
+        fileListing = await getFileListing(projectRoot, args)
+      } catch (error) {
+        throw new Error(`Error getting file listing: ${error}`)
+      }
+
+      uploadFileChunks.push(Buffer.from(fileListing))
+      uploadFileChunks.push(Buffer.from(MARKER_NETWORK_END))
+    }
+
+    // #endregion
+    // #region == Step 5: select coverage files (search or specify)
+
+    let requestedPaths: string[] = []
+
+    // Look for files
+
+    if (args.gcov) {
+      const gcovInclude: string[] = argAsArray(args.gcovInclude)
+      const gcovIgnore: string[] = argAsArray(args.gcovIgnore)
+      const gcovArgs: string[] = argAsArray(args.gcovArgs)
+      const gcovExecutable: string = args.gcovExecutable || 'gcov'
+
+      UploadLogger.verbose(`Running ${gcovExecutable}...`)
+      const gcovLogs = await generateGcovCoverageFiles(projectRoot, gcovInclude, gcovIgnore, gcovArgs, gcovExecutable)
+      UploadLogger.verbose(`${gcovLogs}`)
+    }
+
+    if (args.swift) {
+      await generateSwiftCoverageFiles(args.swiftProject || '')
+    }
+
+    if (args.xcode) {
+      if (!args.xcodeArchivePath) {
+        throw new Error('Please specify xcodeArchivePath to run the Codecov uploader with xcode support')
+      } else {
+        const xcodeArchivePath: string = args.xcodeArchivePath
+        const xcodeLogs = await generateXcodeCoverageFiles(xcodeArchivePath)
+        UploadLogger.verbose(`${xcodeLogs}`)
+      }
+    }
+
+    let coverageFilePaths: string[] = []
+    if (args.file !== undefined) {
+      if (typeof args.file === 'string') {
+        requestedPaths = args.file.split(',')
+      } else {
+        requestedPaths = args.file // Already an array
+      }
+
+      requestedPaths = requestedPaths.filter((path) => {
+        return Boolean(path) || info('Warning: Skipping an empty path passed to `-f`')
+      })
+    }
+
     try {
-      fileListing = await getFileListing(projectRoot, args)
+      const coveragePyLogs = await generateCoveragePyFile(projectRoot, requestedPaths)
+      UploadLogger.verbose(`${coveragePyLogs}`)
     } catch (error) {
-      throw new Error(`Error getting file listing: ${error}`)
+      UploadLogger.verbose(`Skipping coveragepy conversion: ${error}`)
     }
 
-    uploadFileChunks.push(Buffer.from(fileListing))
-    uploadFileChunks.push(Buffer.from(MARKER_NETWORK_END))
-  }
+    coverageFilePaths = requestedPaths
 
-  // #endregion
-  // #region == Step 5: select coverage files (search or specify)
 
-  let requestedPaths: string[] = []
+    if (!args.feature || args.feature.split(',').includes('search') === false) {
+      info('Searching for coverage files...')
+      const isNegated = (path: string) => path.startsWith('!')
+      coverageFilePaths = coverageFilePaths.concat(await getCoverageFiles(
+        args.dir || projectRoot,
+        (() => {
+          const numOfNegatedPaths = coverageFilePaths.filter(isNegated).length
 
-  // Look for files
+          if (coverageFilePaths.length > numOfNegatedPaths) {
+            return coverageFilePaths
+          } else {
+            return coverageFilePaths.concat(coverageFilePatterns())
+          }
+        })(),
+        !args.preventSymbolicLinks,
+      ))
 
-  if (args.gcov) {
-    UploadLogger.verbose('Running gcov...')
-    const gcovInclude: string[] = argAsArray(args.gcovInclude)
-    const gcovIgnore: string[] = argAsArray(args.gcovIgnore)
-    const gcovArgs: string[] = argAsArray(args.gcovArgs)
-    const gcovLogs = await generateGcovCoverageFiles(projectRoot, gcovInclude, gcovIgnore, gcovArgs)
-    UploadLogger.verbose(`${gcovLogs}`)
-  }
+      // Generate what the file listing would be after the blocklist is applied
 
-  if (args.xcode) {
-    if (!args.xcodeArchivePath) {
-      throw new Error('Please specify xcodeArchivePath to run the Codecov uploader with xcode support')
-    } else {
-      const xcodeArchivePath: string = args.xcodeArchivePath
-      const xcodeLogs = await generateXcodeCoverageFiles(xcodeArchivePath)
-      UploadLogger.verbose(`${xcodeLogs}`)
-    }
-  }
+      let coverageFilePathsAfterFilter = coverageFilePaths
 
-  let coverageFilePaths: string[] = []
-  requestedPaths = argAsArray(args.file)
+      if (coverageFilePaths.length > 0) {
+        coverageFilePathsAfterFilter = filterFilesAgainstBlockList(coverageFilePaths, getBlocklist())
+      }
 
-  try {
-    const coveragePyLogs = await generateCoveragePyFile(projectRoot, requestedPaths)
-    UploadLogger.verbose(`${coveragePyLogs}`)
-  } catch (error) {
-    UploadLogger.verbose(`Skipping coveragepy conversion: ${error}`)
-  }
 
-  coverageFilePaths = requestedPaths
 
-  if (!args.feature || args.feature.split(',').includes('search') === false) {
-    info('Searching for coverage files...')
-    const isNegated = (path: string) => path.startsWith('!')
-    coverageFilePaths = coverageFilePaths.concat(await getCoverageFiles(
-      args.dir || projectRoot,
-      (() => {
-        const numOfNegatedPaths = coverageFilePaths.filter(isNegated).length
 
-        if (coverageFilePaths.length > numOfNegatedPaths) {
-          return coverageFilePaths
-        } else {
-          return coverageFilePaths.concat(coverageFilePatterns())
+      // If args.file was passed, emit warning for 'filtered' filess
+
+      if (requestedPaths.length > 0) {
+        if (coverageFilePathsAfterFilter.length !== requestedPaths.length) {
+          info('Warning: Some files passed via the -f flag would normally be excluded from search.')
+          info('If Codecov encounters issues processing your reports, please review https://docs.codecov.com/docs/supported-report-formats')
         }
-      })(),
-    ))
+      } else {
+        // Overwrite coverageFilePaths with coverageFilePathsAfterFilter
+        info('Warning: Some files located via search were excluded from upload.')
+        info('If Codecov did not locate your files, please review https://docs.codecov.com/docs/supported-report-formats')
 
-    // Generate what the file listing would be after the blocklist is applied
+        coverageFilePaths = coverageFilePathsAfterFilter
+      }
 
-    let coverageFilePathsAfterFilter = coverageFilePaths
+    }
+
+    let coverageFilePathsThatExist: string[] = []
 
     if (coverageFilePaths.length > 0) {
-      coverageFilePathsAfterFilter = filterFilesAgainstBlockList(coverageFilePaths, getBlocklist())
+      coverageFilePathsThatExist = cleanCoverageFilePaths(args.dir || projectRoot, coverageFilePaths)
     }
 
-
-
-
-    // If args.file was passed, emit warning for 'filtered' filess
-
-    if (requestedPaths.length > 0) {
-      if (coverageFilePathsAfterFilter.length !== requestedPaths.length) {
-        info('Warning: Some files passed via the -f flag would normally be excluded from search.')
-        info('If Codecov encounters issues processing your reports, please review https://docs.codecov.com/docs/supported-report-formats')
-      }
+    if (coverageFilePathsThatExist.length > 0) {
+      info(`=> Found ${coverageFilePathsThatExist.length} possible coverage files:\n  ` +
+      coverageFilePathsThatExist.join('\n  '))
     } else {
-      // Overwrite coverageFilePaths with coverageFilePathsAfterFilter
-      info('Warning: Some files located via search were excluded from upload.')
-      info('If Codecov did not locate your files, please review https://docs.codecov.com/docs/supported-report-formats')
-
-      coverageFilePaths = coverageFilePathsAfterFilter
+      const noFilesError = args.file ?
+        'No coverage files found, exiting.' :
+        'No coverage files located, please try use `-f`, or change the project root with `-R`'
+      throw new Error(noFilesError)
     }
 
-  }
+    UploadLogger.verbose('End of network processing')
+    // #endregion
+    // #region == Step 6: generate upload file
+    // TODO: capture envs
 
-  let coverageFilePathsThatExist: string[] = []
-
-  if (coverageFilePaths.length > 0) {
-    coverageFilePathsThatExist = cleanCoverageFilePaths(args.dir || projectRoot, coverageFilePaths)
-  }
-
-  if (coverageFilePathsThatExist.length > 0) {
-    info(`=> Found ${coverageFilePathsThatExist.length} possible coverage files:\n  ` +
-    coverageFilePathsThatExist.join('\n  '))
-  } else {
-    const noFilesError = args.file ?
-      'No coverage files found, exiting.' :
-      'No coverage files located, please try use `-f`, or change the project root with `-R`'
-    throw new Error(noFilesError)
-  }
-
-  UploadLogger.verbose('End of network processing')
-  // #endregion
-  // #region == Step 6: generate upload file
-  // TODO: capture envs
-
-  // Get coverage report contents
-  let coverageFileAdded = false
-  for (const coverageFile of coverageFilePathsThatExist) {
-    let fileContents
-    try {
-      info(`Processing ${getFilePath(args.dir || projectRoot, coverageFile)}...`),
-        (fileContents = await readCoverageFile(
-          args.dir || projectRoot,
-          coverageFile,
-        ))
-    } catch (err) {
-      info(`Could not read coverage file (${coverageFile}): ${err}`)
-      continue
-    }
-
-    uploadFileChunks.push(Buffer.from(fileHeader(coverageFile)))
-    uploadFileChunks.push(Buffer.from(fileContents))
-    uploadFileChunks.push(Buffer.from(MARKER_FILE_END))
-    coverageFileAdded = true
-  }
-  if (!coverageFileAdded) {
-    throw new Error( 'No coverage files could be found to upload, exiting.')
-  }
-
-  // Cleanup
-  if (args.clean) {
+    // Get coverage report contents
+    let coverageFileAdded = false
     for (const coverageFile of coverageFilePathsThatExist) {
-      removeFile(args.dir || projectRoot, coverageFile)
-    }
-  }
+      let fileContents
+      try {
+        info(`Processing ${getFilePath(args.dir || projectRoot, coverageFile)}...`),
+          (fileContents = await readCoverageFile(
+            args.dir || projectRoot,
+            coverageFile,
+          ))
+      } catch (err) {
+        info(`Could not read coverage file (${coverageFile}): ${err}`)
+        continue
+      }
 
-  // Environment variables
-  if (args.env || envs.CODECOV_ENV) {
-    const environmentVars = args.env || envs.CODECOV_ENV || ''
-    const vars = environmentVars
-      .split(',')
-      .filter(Boolean)
-      .map(evar => `${evar}=${process.env[evar] || ''}\n`)
-      .join('')
-    uploadFileChunks.push(Buffer.from(vars))
-    uploadFileChunks.push(Buffer.from(MARKER_ENV_END))
+      uploadFileChunks.push(Buffer.from(fileHeader(coverageFile)))
+      uploadFileChunks.push(Buffer.from(fileContents))
+      uploadFileChunks.push(Buffer.from(MARKER_FILE_END))
+      coverageFileAdded = true
+    }
+    if (!coverageFileAdded) {
+      throw new Error( 'No coverage files could be found to upload, exiting.')
+    }
+
+    // Environment variables
+    if (args.env || envs.CODECOV_ENV) {
+      const environmentVars = args.env || envs.CODECOV_ENV || ''
+      const vars = environmentVars
+        .split(',')
+        .filter(Boolean)
+        .map(evar => `${evar}=${process.env[evar] || ''}\n`)
+        .join('')
+      uploadFileChunks.push(Buffer.from(vars))
+      uploadFileChunks.push(Buffer.from(MARKER_ENV_END))
+    }
+
+    // Fixes
+    if (args.feature && args.feature.split(',').includes('fixes') === true) {
+      info('Generating file fixes...')
+      const fixes = await generateFixes(projectRoot)
+      uploadFileChunks.push(Buffer.from(FIXES_HEADER))
+      uploadFileChunks.push(Buffer.from(fixes))
+      uploadFileChunks.push(Buffer.from(MARKER_FILE_END))
+      info('Finished generating file fixes')
+    }
+
+    // Cleanup
+    if (args.clean) {
+      for (const coverageFile of coverageFilePathsThatExist) {
+        removeFile(args.dir || projectRoot, coverageFile)
+      }
+    }
+  } else {
+    const fullPath = getFilePath(args.dir || projectRoot, args.fullReport)
+    if (!fs.existsSync(fullPath)) {
+      throw new Error(`Error uploading to Codecov: Path to ${args.fullReport} does not exist and no coverage report could be uploaded`)
+    }
+    uploadFileChunks.push(fs.readFileSync(fullPath))
+
+    // Cleanup
+    if (args.clean) {
+      removeFile(args.dir || projectRoot, args.fullReport)
+    }
   }
 
   const uploadFile = Buffer.concat(uploadFileChunks)
@@ -307,7 +364,7 @@ export async function main(
 
   const hasToken = token !== ''
 
-  const serviceParams = detectProvider(inputs, hasToken)
+  const serviceParams = await detectProvider(inputs, hasToken)
 
   // #endregion
   // #region == Step 8: either upload or dry-run
@@ -319,8 +376,19 @@ export async function main(
     UploadLogger.verbose(`${parameter}`)
   }
 
-  if (buildParams.slug !== '' && !buildParams.slug?.match(/\//)) {
-    logError(`Slug must follow the format of "<owner>/<repo>" or be blank. We detected "${buildParams.slug}"`)
+  if (!hasToken) {
+    if (!buildParams.slug) {
+      throw new Error(
+        'Slug must be set if a token is not passed. Consider passing a slug via `-r`',
+      )
+    } else {
+      const validSlug = checkSlug(buildParams.slug)
+      if (!validSlug) {
+        throw new Error(
+          `Slug must follow the format of "<owner>/<repo>". We detected "${buildParams.slug}"`,
+        )
+      }
+    }
   }
 
   const query = webHelpers.generateQuery(buildParams)
@@ -353,6 +421,7 @@ export async function main(
       token,
       query,
       args.source || '',
+      envs,
       args,
     )
 
@@ -363,6 +432,7 @@ export async function main(
     const statusAndResultPair = await webHelpers.uploadToCodecovPUT(
       postResults,
       gzippedFile,
+      envs,
       args,
     )
     info(JSON.stringify(statusAndResultPair))

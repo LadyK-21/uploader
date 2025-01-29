@@ -2,6 +2,355 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/codecov/uploader/compare/v0.6.3...v0.7.1) (2023-10-19)
+
+
+### Features
+
+* prevent symbolic link following ([#1223](https://github.com/codecov/uploader/issues/1223)) ([61e0e4f](https://github.com/codecov/uploader/commit/61e0e4fb8c246865634dd1c5cf647c1b7b1f5c0d))
+
+
+### Bug Fixes
+
+* **deps:** update dependency undici to v5.26.2 [security] ([#1232](https://github.com/codecov/uploader/issues/1232)) ([24772d1](https://github.com/codecov/uploader/commit/24772d18bd16800d9f57ed3a01c29b6f21a2317a))
+* **deps:** update dependency undici to v5.26.3 ([#1230](https://github.com/codecov/uploader/issues/1230)) ([2cbbfcd](https://github.com/codecov/uploader/commit/2cbbfcd70c5b9712d5102d5f4975836bcc057bbe))
+
+### [0.7.0](https://github.com/codecov/uploader/compare/v0.6.3...v0.7.0) (2023-10-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency undici to v5.26.2 [security] ([#1232](https://github.com/codecov/uploader/issues/1232)) ([24772d1](https://github.com/codecov/uploader/commit/24772d18bd16800d9f57ed3a01c29b6f21a2317a))
+* **deps:** update dependency undici to v5.26.3 ([#1230](https://github.com/codecov/uploader/issues/1230)) ([2cbbfcd](https://github.com/codecov/uploader/commit/2cbbfcd70c5b9712d5102d5f4975836bcc057bbe))
+
+### [0.6.3](https://github.com/codecov/uploader/compare/v0.6.2...v0.6.3) (2023-10-10)
+
+
+### Bug Fixes
+
+* add ETIMEDOUT ([#1203](https://github.com/codecov/uploader/issues/1203)) ([23d8e78](https://github.com/codecov/uploader/commit/23d8e7827373b4e0c07959c7f00dae506526b8ce))
+* **deps:** update dependency undici to v5.25.3 ([#1114](https://github.com/codecov/uploader/issues/1114)) ([4d20e99](https://github.com/codecov/uploader/commit/4d20e99ace5e90983ffc4c510603eb19aef1aab9))
+* **deps:** update dependency undici to v5.25.4 ([#1212](https://github.com/codecov/uploader/issues/1212)) ([cf51701](https://github.com/codecov/uploader/commit/cf51701a14d9fd132af0b121c0b9d353252549f3))
+* **deps:** update dependency validator to v13.11.0 ([#1110](https://github.com/codecov/uploader/issues/1110)) ([39f8f0a](https://github.com/codecov/uploader/commit/39f8f0a2e529cc6169f5732cbdae5eb511d8e092))
+* handle windows drive letter at start of path ([#1099](https://github.com/codecov/uploader/issues/1099)) ([cba973c](https://github.com/codecov/uploader/commit/cba973cecd9360338f0a7a96e3b7ab597ef29fd5))
+* retry on ECONNRESET ([#1098](https://github.com/codecov/uploader/issues/1098)) ([acbf664](https://github.com/codecov/uploader/commit/acbf664d2a052ef365a35027873a0c3b6d8c3e71)), closes [codecov/uploader#537](https://github.com/codecov/uploader/issues/537)
+* update windows node version ([#1134](https://github.com/codecov/uploader/issues/1134)) ([dfeedf5](https://github.com/codecov/uploader/commit/dfeedf5bf631b29d30dc635a4da92c68fa33b5be))
+
+### [0.6.2](https://github.com/codecov/uploader/compare/v0.6.0...v0.6.2) (2023-08-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fast-glob to v3.3.1 ([#1104](https://github.com/codecov/uploader/issues/1104)) ([e151a79](https://github.com/codecov/uploader/commit/e151a79906e365a5c5a9c5b86f9e956dceed6c99)), closes [#1063](https://github.com/codecov/uploader/issues/1063)
+* **deps:** update dependency undici to v5.22.0 ([#1031](https://github.com/codecov/uploader/issues/1031)) ([32e1f90](https://github.com/codecov/uploader/commit/32e1f90f3879776bf9ca24b938f113d65cd2215b))
+* **deps:** update dependency undici to v5.22.1 ([#1059](https://github.com/codecov/uploader/issues/1059)) ([0f48b37](https://github.com/codecov/uploader/commit/0f48b3754cc1021a7f9d27a3112dd88e2bb22cba))
+* **deps:** update dependency yargs to v17.7.2 ([#1038](https://github.com/codecov/uploader/issues/1038)) ([2ab7941](https://github.com/codecov/uploader/commit/2ab7941a173f12419a5126e2a6522c0eecab0446))
+* use token param for upstream proxy auth ([b448744](https://github.com/codecov/uploader/commit/b4487448b185de43947120daf83d9f50da034922))
+
+### [0.6.1](https://github.com/codecov/uploader/compare/v0.6.0...v0.6.1) (2023-06-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency undici to v5.22.0 ([#1031](https://github.com/codecov/uploader/issues/1031)) ([32e1f90](https://github.com/codecov/uploader/commit/32e1f90f3879776bf9ca24b938f113d65cd2215b))
+* **deps:** update dependency undici to v5.22.1 ([#1059](https://github.com/codecov/uploader/issues/1059)) ([0f48b37](https://github.com/codecov/uploader/commit/0f48b3754cc1021a7f9d27a3112dd88e2bb22cba))
+* **deps:** update dependency yargs to v17.7.2 ([#1038](https://github.com/codecov/uploader/issues/1038)) ([2ab7941](https://github.com/codecov/uploader/commit/2ab7941a173f12419a5126e2a6522c0eecab0446))
+* use token param for upstream proxy auth ([b448744](https://github.com/codecov/uploader/commit/b4487448b185de43947120daf83d9f50da034922))
+
+## [0.6.0](https://github.com/codecov/uploader/compare/v0.3.3...v0.6.0) (2023-06-16)
+
+
+### Features
+
+* add full report ([#983](https://github.com/codecov/uploader/issues/983)) ([416c243](https://github.com/codecov/uploader/commit/416c2437c938464feda4b62f5bf5582824b27014))
+* support cobertura reports generated by Microsoft.CodeCoverage ([da21e14](https://github.com/codecov/uploader/commit/da21e147f25c95d57f130bb396fe8f26d89f6f97)), closes [#917](https://github.com/codecov/uploader/issues/917)
+
+
+### Bug Fixes
+
+* add pointer to docs ([#1007](https://github.com/codecov/uploader/issues/1007)) ([f4c98c6](https://github.com/codecov/uploader/commit/f4c98c6e0c26a39710e49f020773d93782faa716))
+* add swift coverage conversions ([1f27f2d](https://github.com/codecov/uploader/commit/1f27f2d3306fa5e4349ae5d2da16649d5eac8026))
+* change alias for fullreport to not conflict with file ([#1081](https://github.com/codecov/uploader/issues/1081)) ([a171543](https://github.com/codecov/uploader/commit/a1715435b97c5188d3c69f8cead2dd1a907132c3))
+* **deps:** update dependency undici to v5.19.1 [security] ([b275e4b](https://github.com/codecov/uploader/commit/b275e4b832163ee6c464c9f530b89825b19aa218))
+* **deps:** update dependency undici to v5.20.0 ([846313b](https://github.com/codecov/uploader/commit/846313b8ce9bdd96b7f9323d77421e70acd1f411))
+* **deps:** update dependency undici to v5.21.0 ([#985](https://github.com/codecov/uploader/issues/985)) ([d2446d0](https://github.com/codecov/uploader/commit/d2446d01c7eb61fe2cb44d8bc1817a7cb9daed4a))
+* **deps:** update dependency undici to v5.21.2 ([#1016](https://github.com/codecov/uploader/issues/1016)) ([b4bcf02](https://github.com/codecov/uploader/commit/b4bcf021f02d9c03a241013f4e16945a8d9cf699))
+* **deps:** update dependency undici to v5.22.0 ([#1031](https://github.com/codecov/uploader/issues/1031)) ([c76f80d](https://github.com/codecov/uploader/commit/c76f80d11cbc462580bbcf9e0796b46489392b94))
+* **deps:** update dependency undici to v5.22.1 ([#1059](https://github.com/codecov/uploader/issues/1059)) ([554e7a7](https://github.com/codecov/uploader/commit/554e7a77aef79253143e53b72da7c098033b0484))
+* **deps:** update dependency validator to v13.9.0 ([62490d6](https://github.com/codecov/uploader/commit/62490d6195a9e71763e146625a4a77ac2e41efe6))
+* **deps:** update dependency yargs to v17.7.1 ([902d291](https://github.com/codecov/uploader/commit/902d2919f6d29afcb282af9ee4b8b1f65a61825a))
+* **deps:** update dependency yargs to v17.7.2 ([#1038](https://github.com/codecov/uploader/issues/1038)) ([a7e9e3e](https://github.com/codecov/uploader/commit/a7e9e3e212284979e837f77122f9f32b53b0e3f4))
+* **files:** exclude .go and .marker files ([#935](https://github.com/codecov/uploader/issues/935)) ([43924aa](https://github.com/codecov/uploader/commit/43924aa254b87f62bf07feba47d8c17a766a6d21))
+* move checkSlug fn to validate ([#990](https://github.com/codecov/uploader/issues/990)) ([c468bfd](https://github.com/codecov/uploader/commit/c468bfd51b271413f6e9cb736b9c4fa8bdd6b0a9))
+* refactor spawnsize ([#999](https://github.com/codecov/uploader/issues/999)) ([bf1cfb9](https://github.com/codecov/uploader/commit/bf1cfb9be6e2b1cca73878b7f42ea8878911bc3b))
+* remove colons from file name ([f816650](https://github.com/codecov/uploader/commit/f816650892a7a570fa58dbdd64da743145813da2))
+
+### [0.5.1](https://github.com/codecov/uploader/compare/v0.3.3...v0.5.1) (2023-05-30)
+
+
+### Features
+
+* add full report ([#983](https://github.com/codecov/uploader/issues/983)) ([416c243](https://github.com/codecov/uploader/commit/416c2437c938464feda4b62f5bf5582824b27014))
+* support cobertura reports generated by Microsoft.CodeCoverage ([da21e14](https://github.com/codecov/uploader/commit/da21e147f25c95d57f130bb396fe8f26d89f6f97)), closes [#917](https://github.com/codecov/uploader/issues/917)
+
+
+### Bug Fixes
+
+* add pointer to docs ([#1007](https://github.com/codecov/uploader/issues/1007)) ([f4c98c6](https://github.com/codecov/uploader/commit/f4c98c6e0c26a39710e49f020773d93782faa716))
+* add swift coverage conversions ([1f27f2d](https://github.com/codecov/uploader/commit/1f27f2d3306fa5e4349ae5d2da16649d5eac8026))
+* **deps:** update dependency undici to v5.19.1 [security] ([b275e4b](https://github.com/codecov/uploader/commit/b275e4b832163ee6c464c9f530b89825b19aa218))
+* **deps:** update dependency undici to v5.20.0 ([846313b](https://github.com/codecov/uploader/commit/846313b8ce9bdd96b7f9323d77421e70acd1f411))
+* **deps:** update dependency undici to v5.21.0 ([#985](https://github.com/codecov/uploader/issues/985)) ([d2446d0](https://github.com/codecov/uploader/commit/d2446d01c7eb61fe2cb44d8bc1817a7cb9daed4a))
+* **deps:** update dependency undici to v5.21.2 ([#1016](https://github.com/codecov/uploader/issues/1016)) ([b4bcf02](https://github.com/codecov/uploader/commit/b4bcf021f02d9c03a241013f4e16945a8d9cf699))
+* **deps:** update dependency undici to v5.22.0 ([#1031](https://github.com/codecov/uploader/issues/1031)) ([c76f80d](https://github.com/codecov/uploader/commit/c76f80d11cbc462580bbcf9e0796b46489392b94))
+* **deps:** update dependency undici to v5.22.1 ([#1059](https://github.com/codecov/uploader/issues/1059)) ([554e7a7](https://github.com/codecov/uploader/commit/554e7a77aef79253143e53b72da7c098033b0484))
+* **deps:** update dependency validator to v13.9.0 ([62490d6](https://github.com/codecov/uploader/commit/62490d6195a9e71763e146625a4a77ac2e41efe6))
+* **deps:** update dependency yargs to v17.7.1 ([902d291](https://github.com/codecov/uploader/commit/902d2919f6d29afcb282af9ee4b8b1f65a61825a))
+* **deps:** update dependency yargs to v17.7.2 ([#1038](https://github.com/codecov/uploader/issues/1038)) ([a7e9e3e](https://github.com/codecov/uploader/commit/a7e9e3e212284979e837f77122f9f32b53b0e3f4))
+* **files:** exclude .go and .marker files ([#935](https://github.com/codecov/uploader/issues/935)) ([43924aa](https://github.com/codecov/uploader/commit/43924aa254b87f62bf07feba47d8c17a766a6d21))
+* move checkSlug fn to validate ([#990](https://github.com/codecov/uploader/issues/990)) ([c468bfd](https://github.com/codecov/uploader/commit/c468bfd51b271413f6e9cb736b9c4fa8bdd6b0a9))
+* refactor spawnsize ([#999](https://github.com/codecov/uploader/issues/999)) ([bf1cfb9](https://github.com/codecov/uploader/commit/bf1cfb9be6e2b1cca73878b7f42ea8878911bc3b))
+* remove colons from file name ([f816650](https://github.com/codecov/uploader/commit/f816650892a7a570fa58dbdd64da743145813da2))
+
+### [0.5.0](https://github.com/codecov/uploader/compare/v0.4.1...v0.5.0) (2023-04-20)
+
+
+### Features
+
+* feat: build aarch64 ([#523](https://github.com/codecov/uploader/issues/523)) ([ec2b1c3](https://github.com/codecov/uploader/commit/ec2b1c3ca91bf7d60978d8bf14cb66293d0cf723))
+
+
+### Bug Fixes
+
+* Update fetchGitRoot to not halt execution ([ab87260](https://github.com/codecov/uploader/commit/ab87260226ddda691b2baa7824f97495f8723173))
+* add pointer to docs ([#1007](https://github.com/codecov/uploader/issues/1007)) ([f4c98c6](https://github.com/codecov/uploader/commit/f4c98c6e0c26a39710e49f020773d93782faa716))
+* **deps:** update dependency undici to v5.21.2 ([#1016](https://github.com/codecov/uploader/issues/1016)) ([b4bcf02](https://github.com/codecov/uploader/commit/b4bcf021f02d9c03a241013f4e16945a8d9cf699))
+* **deps:** update dependency eslint to v8.37.0 ([977093b](https://github.com/codecov/uploader/commit/977093be56039701d667d36f388b2852c58e401a))
+* **deps:** update actions/checkout digest to 8e5e7e5 ([25e034e](https://github.com/codecov/uploader/commit/25e034ea4709bc1879f5cef20d20dfd9838b0cdf))
+* **deps:** update typescript-eslint monorepo to v5.58.0 ([ceeb344](https://github.com/codecov/uploader/commit/ceeb344725b7202b405f7a8bbeebba44c794ef65))
+* **deps:** update commitlint monorepo to v17.6.1 ([d96d5ef](https://github.com/codecov/uploader/commit/d96d5efb18416b1e3e50c2bc857442548b5c43c7))
+* **deps:** update node.js to v18.16.0 ([cdd2fd2](https://github.com/codecov/uploader/commit/cdd2fd25ff9cd2159038a87e921e774c3ac0c319))
+* **deps:** update google/cloud-sdk docker tag to v427 ([677310f](https://github.com/codecov/uploader/commit/677310f43d9c4a3acf2d075114053f648e717f76))
+* **deps:** update dependency eslint to v8.38.0 ([43e064c](https://github.com/codecov/uploader/commit/43e064c0e205fbeaaf8007b43d926307f4d47339))
+* **deps:** update dependency lint-staged to v13.2.1 ([3cf9518](https://github.com/codecov/uploader/commit/3cf9518eaf0c1866ca3425573d147da6ff6517aa))
+* **deps:** update github/codeql-action digest to 7df0ce3 ([417380c](https://github.com/codecov/uploader/commit/417380c9404170d2eb5c3f4c0672019e66057352))
+* **deps:** update dependency @types/yargs to v17.0.24 ([9f4375c](https://github.com/codecov/uploader/commit/9f4375c1d0eeaebd22c803efefb8d9b3a8e2aa0e))
+* **deps:** update dependency @types/validator to v13.7.15 ([654957d](https://github.com/codecov/uploader/commit/654957d23de2b7e2abd74da363de115ab4732293))
+
+### [0.4.1](https://github.com/codecov/uploader/compare/v0.4.0...v0.4.1) (2023-03-30)
+
+
+### Features
+
+* add full report ([#983](https://github.com/codecov/uploader/issues/983)) ([416c243](https://github.com/codecov/uploader/commit/416c2437c938464feda4b62f5bf5582824b27014))
+* support cobertura reports generated by Microsoft.CodeCoverage ([da21e14](https://github.com/codecov/uploader/commit/da21e147f25c95d57f130bb396fe8f26d89f6f97)), closes [#917](https://github.com/codecov/uploader/issues/917)
+
+
+### Bug Fixes
+
+* **deps:** update dependency undici to v5.21.0 ([#985](https://github.com/codecov/uploader/issues/985)) ([d2446d0](https://github.com/codecov/uploader/commit/d2446d01c7eb61fe2cb44d8bc1817a7cb9daed4a))
+* move checkSlug fn to validate ([#990](https://github.com/codecov/uploader/issues/990)) ([c468bfd](https://github.com/codecov/uploader/commit/c468bfd51b271413f6e9cb736b9c4fa8bdd6b0a9))
+* refactor spawnsize ([#999](https://github.com/codecov/uploader/issues/999)) ([bf1cfb9](https://github.com/codecov/uploader/commit/bf1cfb9be6e2b1cca73878b7f42ea8878911bc3b))
+
+### [0.4.0](https://github.com/codecov/uploader/compare/v0.3.5...v0.4.0) (2023-03-21)
+
+
+### Features
+
+* add swift coverage conversions ([1f27f2d](https://github.com/codecov/uploader/commit/1f27f2d3306fa5e4349ae5d2da16649d5eac8026))
+
+
+### Bug Fixes
+
+* core fixes test ([9b3fcdf](https://github.com/codecov/uploader/commit/9b3fcdf5fa1f195bcb9c62b77ba91757eb8ff294))
+* **deps:** update dependency undici to v5.19.1 [security] ([b275e4b](https://github.com/codecov/uploader/commit/b275e4b832163ee6c464c9f530b89825b19aa218))
+* **deps:** update dependency undici to v5.20.0 ([846313b](https://github.com/codecov/uploader/commit/846313b8ce9bdd96b7f9323d77421e70acd1f411))
+* **deps:** update dependency validator to v13.9.0 ([62490d6](https://github.com/codecov/uploader/commit/62490d6195a9e71763e146625a4a77ac2e41efe6))
+* **deps:** update dependency yargs to v17.7.1 ([902d291](https://github.com/codecov/uploader/commit/902d2919f6d29afcb282af9ee4b8b1f65a61825a))
+* remove colons from file name ([f816650](https://github.com/codecov/uploader/commit/f816650892a7a570fa58dbdd64da743145813da2))
+
+### [0.3.5](https://github.com/codecov/uploader/compare/v0.3.3...v0.3.5) (2023-02-16)
+
+
+### Bug Fixes
+
+* **files:** exclude .go and .marker files ([#935](https://github.com/codecov/uploader/issues/935)) ([43924aa](https://github.com/codecov/uploader/commit/43924aa254b87f62bf07feba47d8c17a766a6d21))
+
+### [0.3.4](https://github.com/codecov/uploader/compare/v0.3.2...v0.3.4) (2023-02-15)
+
+
+### Features
+
+* golang report fixing ([55b65c2](https://github.com/codecov/uploader/commit/55b65c2e93767a7d71978e4b9a22a19d44a387a3))
+
+
+### Bug Fixes
+
+* add kotlin fixes ([14ab811](https://github.com/codecov/uploader/commit/14ab811bfebb68fdef4947264a4a2216aad53483))
+* core fixes test ([9b3fcdf](https://github.com/codecov/uploader/commit/9b3fcdf5fa1f195bcb9c62b77ba91757eb8ff294))
+* **deps:** update dependency fast-glob to v3.2.12 ([#880](https://github.com/codecov/uploader/issues/880)) ([40ff003](https://github.com/codecov/uploader/commit/40ff003e901ca8e9b779dad5ab5b0d1be3c3c62e))
+* **deps:** update dependency yargs to v17.6.2 ([30fb919](https://github.com/codecov/uploader/commit/30fb9192342a2f9e18af2d76e5fe3918ccd78ec6))
+* exclude zip files and files in the yarn cache ([#905](https://github.com/codecov/uploader/issues/905)) ([1734fdb](https://github.com/codecov/uploader/commit/1734fdbd873817c40081c2e60f5ade7f17258fab))
+* revert and run this ish ([778e6d5](https://github.com/codecov/uploader/commit/778e6d5ef93af0906d1c14350f3917347521594a))
+
+### [0.3.3](https://github.com/codecov/uploader/compare/v0.3.2...v0.3.3) (2023-01-26)
+
+
+### Features
+
+* golang report fixing ([55b65c2](https://github.com/codecov/uploader/commit/55b65c2e93767a7d71978e4b9a22a19d44a387a3))
+
+
+### Bug Fixes
+
+* core fixes test ([9b3fcdf](https://github.com/codecov/uploader/commit/9b3fcdf5fa1f195bcb9c62b77ba91757eb8ff294))
+* **deps:** update dependency fast-glob to v3.2.12 ([#880](https://github.com/codecov/uploader/issues/880)) ([40ff003](https://github.com/codecov/uploader/commit/40ff003e901ca8e9b779dad5ab5b0d1be3c3c62e))
+* exclude zip files and files in the yarn cache ([#905](https://github.com/codecov/uploader/issues/905)) ([1734fdb](https://github.com/codecov/uploader/commit/1734fdbd873817c40081c2e60f5ade7f17258fab))
+* revert and run this ish ([778e6d5](https://github.com/codecov/uploader/commit/778e6d5ef93af0906d1c14350f3917347521594a))
+
+### [0.3.2](https://github.com/codecov/uploader/compare/v0.3.1...v0.3.2) (2022-09-13)
+
+
+### Features
+
+* create fixes on c-like and php files ([#869](https://github.com/codecov/uploader/issues/869)) ([29b240c](https://github.com/codecov/uploader/commit/29b240c07ca4bfc0312c66eb4d2fd78f2bf6c0db))
+
+
+### Bug Fixes
+
+* update micromatch regex ([#635](https://github.com/codecov/uploader/issues/635)) ([0bf804c](https://github.com/codecov/uploader/commit/0bf804c338aa0fc49d2a0656a4b1552014403f1f))
+* use proper end for fixes ([#872](https://github.com/codecov/uploader/issues/872)) ([e10ef7d](https://github.com/codecov/uploader/commit/e10ef7d4e7c05536d7a7c8e1d12d8dabf0456a9a))
+* **yargs:** specify types for every CLI option ([#878](https://github.com/codecov/uploader/issues/878)) ([74b1e86](https://github.com/codecov/uploader/commit/74b1e863f840584157a3f4b2a190ae89566e7be8))
+
+### [0.3.1](https://github.com/codecov/uploader/compare/v0.3.0...v0.3.1) (2022-09-01)
+
+
+### Features
+
+* accept comma-separated files in args ([#861](https://github.com/codecov/uploader/issues/861)) ([2a3e897](https://github.com/codecov/uploader/commit/2a3e897ba654eea43005e27768435f83ce074d92))
+* add gcov executable ([#794](https://github.com/codecov/uploader/issues/794)) ([fecf6b4](https://github.com/codecov/uploader/commit/fecf6b401ea44dcb14f52820107f23170c21709a))
+* create fixes on c-like and php files ([#869](https://github.com/codecov/uploader/issues/869)) ([29b240c](https://github.com/codecov/uploader/commit/29b240c07ca4bfc0312c66eb4d2fd78f2bf6c0db))
+* ignore files ending in .*js ([#798](https://github.com/codecov/uploader/issues/798)) ([1cd0d23](https://github.com/codecov/uploader/commit/1cd0d23322988a9af7f06d7fd8681ce4e5558b5c))
+
+
+### Bug Fixes
+
+* **deps:** pin dependency undici to 5.5.1 ([#806](https://github.com/codecov/uploader/issues/806)) ([894b823](https://github.com/codecov/uploader/commit/894b8233d0b92694d5f21df8145b908ffb180524))
+* **deps:** update dependency https-proxy-agent to v5.0.1 ([90a68c0](https://github.com/codecov/uploader/commit/90a68c021b0cc7f098fb644934b1d29771e4fd88))
+* **deps:** update dependency undici to v5.10.0 ([#862](https://github.com/codecov/uploader/issues/862)) ([65aa5f0](https://github.com/codecov/uploader/commit/65aa5f0b17ffdb0b63909f27d800ada4e5d8280a))
+* **deps:** update dependency undici to v5.2.0 ([e7fb541](https://github.com/codecov/uploader/commit/e7fb54164013773066c144140344dcd5f88b0eba))
+* **deps:** update dependency undici to v5.4.0 ([#777](https://github.com/codecov/uploader/issues/777)) ([9ff8396](https://github.com/codecov/uploader/commit/9ff83961ca0e09acf4d0f137ad9d65e5f4089f4d))
+* **deps:** update dependency undici to v5.5.1 ([#804](https://github.com/codecov/uploader/issues/804)) ([ef52c46](https://github.com/codecov/uploader/commit/ef52c46ac47eb0011e7ae112e516f86a999f9217))
+* **deps:** update dependency undici to v5.6.0 ([#819](https://github.com/codecov/uploader/issues/819)) ([ac8eed9](https://github.com/codecov/uploader/commit/ac8eed9c0ceca1ce9ee8db41b4d0d73b9782dc01))
+* **deps:** update dependency undici to v5.8.0 ([#826](https://github.com/codecov/uploader/issues/826)) ([948d38d](https://github.com/codecov/uploader/commit/948d38d662708f0e885e5b0b9093b07c3db6f87f))
+* **deps:** update dependency undici to v5.8.1 ([#843](https://github.com/codecov/uploader/issues/843)) ([84059c4](https://github.com/codecov/uploader/commit/84059c4556c897599ac65422cf3730e94071bd74))
+* **deps:** update dependency undici to v5.8.2 ([#844](https://github.com/codecov/uploader/issues/844)) ([469c64b](https://github.com/codecov/uploader/commit/469c64b560f62066d7c48370a8f093286ab76ff6))
+* **deps:** update dependency undici to v5.9.1 ([#854](https://github.com/codecov/uploader/issues/854)) ([0e6c734](https://github.com/codecov/uploader/commit/0e6c734109c78ca4ed746a05a1ff9be24b33c361))
+* **deps:** update dependency yargs to v17.4.1 ([d0d9548](https://github.com/codecov/uploader/commit/d0d95483cc1aa5a7da86969af3f42d7824d280ef))
+* **deps:** update dependency yargs to v17.5.0 ([5911bb5](https://github.com/codecov/uploader/commit/5911bb541a0474cbeb6ad01b095f154a0ea0b7dd))
+* **deps:** update dependency yargs to v17.5.1 ([#764](https://github.com/codecov/uploader/issues/764)) ([fe181a2](https://github.com/codecov/uploader/commit/fe181a210765f6c6e6ddfe7c29c933b4e1329909))
+* increase maxBuffer of spawnSync ([c121446](https://github.com/codecov/uploader/commit/c12144697e95051b061488feae60db4b98d600c2))
+* parse both versions of ssh urls for remotes ([#793](https://github.com/codecov/uploader/issues/793)) ([84df6d1](https://github.com/codecov/uploader/commit/84df6d138c97db110d73345a74f97bca9a904d96))
+* store upload file contents on a Buffer ([0209be2](https://github.com/codecov/uploader/commit/0209be276dc9df75b41da8436f5d7209ae368a11))
+* suppress errors during glob for files ([#855](https://github.com/codecov/uploader/issues/855)) ([f8d7a3a](https://github.com/codecov/uploader/commit/f8d7a3a82034a3138aa4d9ddc99f7d9fa17d8dc9))
+* throw error when flags do not match pattern ([#831](https://github.com/codecov/uploader/issues/831)) ([cf2585c](https://github.com/codecov/uploader/commit/cf2585cef6ae72f1ac8fc0fba9ec645ae2750d7e)), closes [#829](https://github.com/codecov/uploader/issues/829) [#835](https://github.com/codecov/uploader/issues/835)
+* typo ([#812](https://github.com/codecov/uploader/issues/812)) ([3b2e37d](https://github.com/codecov/uploader/commit/3b2e37d290e429e7d12210e7e8dd56674f089a3c))
+* use proper end for fixes ([#872](https://github.com/codecov/uploader/issues/872)) ([e10ef7d](https://github.com/codecov/uploader/commit/e10ef7d4e7c05536d7a7c8e1d12d8dabf0456a9a))
+
+## [0.3.0](https://github.com/codecov/uploader/compare/v0.2.6...v0.3.0) (2022-09-01)
+
+
+### Features
+
+* accept comma-separated files in args ([#861](https://github.com/codecov/uploader/issues/861)) ([2a3e897](https://github.com/codecov/uploader/commit/2a3e897ba654eea43005e27768435f83ce074d92))
+* add gcov executable ([#794](https://github.com/codecov/uploader/issues/794)) ([fecf6b4](https://github.com/codecov/uploader/commit/fecf6b401ea44dcb14f52820107f23170c21709a))
+* create fixes on c-like and php files ([#869](https://github.com/codecov/uploader/issues/869)) ([29b240c](https://github.com/codecov/uploader/commit/29b240c07ca4bfc0312c66eb4d2fd78f2bf6c0db))
+* ignore files ending in .*js ([#798](https://github.com/codecov/uploader/issues/798)) ([1cd0d23](https://github.com/codecov/uploader/commit/1cd0d23322988a9af7f06d7fd8681ce4e5558b5c))
+
+
+### Bug Fixes
+
+* **deps:** pin dependency undici to 5.5.1 ([#806](https://github.com/codecov/uploader/issues/806)) ([894b823](https://github.com/codecov/uploader/commit/894b8233d0b92694d5f21df8145b908ffb180524))
+* **deps:** update dependency https-proxy-agent to v5.0.1 ([90a68c0](https://github.com/codecov/uploader/commit/90a68c021b0cc7f098fb644934b1d29771e4fd88))
+* **deps:** update dependency undici to v5.10.0 ([#862](https://github.com/codecov/uploader/issues/862)) ([65aa5f0](https://github.com/codecov/uploader/commit/65aa5f0b17ffdb0b63909f27d800ada4e5d8280a))
+* **deps:** update dependency undici to v5.2.0 ([e7fb541](https://github.com/codecov/uploader/commit/e7fb54164013773066c144140344dcd5f88b0eba))
+* **deps:** update dependency undici to v5.4.0 ([#777](https://github.com/codecov/uploader/issues/777)) ([9ff8396](https://github.com/codecov/uploader/commit/9ff83961ca0e09acf4d0f137ad9d65e5f4089f4d))
+* **deps:** update dependency undici to v5.5.1 ([#804](https://github.com/codecov/uploader/issues/804)) ([ef52c46](https://github.com/codecov/uploader/commit/ef52c46ac47eb0011e7ae112e516f86a999f9217))
+* **deps:** update dependency undici to v5.6.0 ([#819](https://github.com/codecov/uploader/issues/819)) ([ac8eed9](https://github.com/codecov/uploader/commit/ac8eed9c0ceca1ce9ee8db41b4d0d73b9782dc01))
+* **deps:** update dependency undici to v5.8.0 ([#826](https://github.com/codecov/uploader/issues/826)) ([948d38d](https://github.com/codecov/uploader/commit/948d38d662708f0e885e5b0b9093b07c3db6f87f))
+* **deps:** update dependency undici to v5.8.1 ([#843](https://github.com/codecov/uploader/issues/843)) ([84059c4](https://github.com/codecov/uploader/commit/84059c4556c897599ac65422cf3730e94071bd74))
+* **deps:** update dependency undici to v5.8.2 ([#844](https://github.com/codecov/uploader/issues/844)) ([469c64b](https://github.com/codecov/uploader/commit/469c64b560f62066d7c48370a8f093286ab76ff6))
+* **deps:** update dependency undici to v5.9.1 ([#854](https://github.com/codecov/uploader/issues/854)) ([0e6c734](https://github.com/codecov/uploader/commit/0e6c734109c78ca4ed746a05a1ff9be24b33c361))
+* **deps:** update dependency yargs to v17.4.1 ([d0d9548](https://github.com/codecov/uploader/commit/d0d95483cc1aa5a7da86969af3f42d7824d280ef))
+* **deps:** update dependency yargs to v17.5.0 ([5911bb5](https://github.com/codecov/uploader/commit/5911bb541a0474cbeb6ad01b095f154a0ea0b7dd))
+* **deps:** update dependency yargs to v17.5.1 ([#764](https://github.com/codecov/uploader/issues/764)) ([fe181a2](https://github.com/codecov/uploader/commit/fe181a210765f6c6e6ddfe7c29c933b4e1329909))
+* increase maxBuffer of spawnSync ([c121446](https://github.com/codecov/uploader/commit/c12144697e95051b061488feae60db4b98d600c2))
+* parse both versions of ssh urls for remotes ([#793](https://github.com/codecov/uploader/issues/793)) ([84df6d1](https://github.com/codecov/uploader/commit/84df6d138c97db110d73345a74f97bca9a904d96))
+* store upload file contents on a Buffer ([0209be2](https://github.com/codecov/uploader/commit/0209be276dc9df75b41da8436f5d7209ae368a11))
+* suppress errors during glob for files ([#855](https://github.com/codecov/uploader/issues/855)) ([f8d7a3a](https://github.com/codecov/uploader/commit/f8d7a3a82034a3138aa4d9ddc99f7d9fa17d8dc9))
+* throw error when flags do not match pattern ([#831](https://github.com/codecov/uploader/issues/831)) ([cf2585c](https://github.com/codecov/uploader/commit/cf2585cef6ae72f1ac8fc0fba9ec645ae2750d7e)), closes [#829](https://github.com/codecov/uploader/issues/829) [#835](https://github.com/codecov/uploader/issues/835)
+* typo ([#812](https://github.com/codecov/uploader/issues/812)) ([3b2e37d](https://github.com/codecov/uploader/commit/3b2e37d290e429e7d12210e7e8dd56674f089a3c))
+
+### [0.2.6](https://github.com/codecov/uploader/compare/v0.2.5...v0.2.6) (2022-08-24)
+
+
+### Features
+
+* accept comma-separated files in args ([#861](https://github.com/codecov/uploader/issues/861)) ([2a3e897](https://github.com/codecov/uploader/commit/2a3e897ba654eea43005e27768435f83ce074d92))
+* add gcov executable ([#794](https://github.com/codecov/uploader/issues/794)) ([fecf6b4](https://github.com/codecov/uploader/commit/fecf6b401ea44dcb14f52820107f23170c21709a))
+* ignore files ending in .*js ([#798](https://github.com/codecov/uploader/issues/798)) ([1cd0d23](https://github.com/codecov/uploader/commit/1cd0d23322988a9af7f06d7fd8681ce4e5558b5c))
+
+
+### Bug Fixes
+
+* **deps:** pin dependency undici to 5.5.1 ([#806](https://github.com/codecov/uploader/issues/806)) ([894b823](https://github.com/codecov/uploader/commit/894b8233d0b92694d5f21df8145b908ffb180524))
+* **deps:** update dependency https-proxy-agent to v5.0.1 ([90a68c0](https://github.com/codecov/uploader/commit/90a68c021b0cc7f098fb644934b1d29771e4fd88))
+* **deps:** update dependency undici to v5.10.0 ([#862](https://github.com/codecov/uploader/issues/862)) ([65aa5f0](https://github.com/codecov/uploader/commit/65aa5f0b17ffdb0b63909f27d800ada4e5d8280a))
+* **deps:** update dependency undici to v5.2.0 ([e7fb541](https://github.com/codecov/uploader/commit/e7fb54164013773066c144140344dcd5f88b0eba))
+* **deps:** update dependency undici to v5.4.0 ([#777](https://github.com/codecov/uploader/issues/777)) ([9ff8396](https://github.com/codecov/uploader/commit/9ff83961ca0e09acf4d0f137ad9d65e5f4089f4d))
+* **deps:** update dependency undici to v5.5.1 ([#804](https://github.com/codecov/uploader/issues/804)) ([ef52c46](https://github.com/codecov/uploader/commit/ef52c46ac47eb0011e7ae112e516f86a999f9217))
+* **deps:** update dependency undici to v5.6.0 ([#819](https://github.com/codecov/uploader/issues/819)) ([ac8eed9](https://github.com/codecov/uploader/commit/ac8eed9c0ceca1ce9ee8db41b4d0d73b9782dc01))
+* **deps:** update dependency undici to v5.8.0 ([#826](https://github.com/codecov/uploader/issues/826)) ([948d38d](https://github.com/codecov/uploader/commit/948d38d662708f0e885e5b0b9093b07c3db6f87f))
+* **deps:** update dependency undici to v5.8.1 ([#843](https://github.com/codecov/uploader/issues/843)) ([84059c4](https://github.com/codecov/uploader/commit/84059c4556c897599ac65422cf3730e94071bd74))
+* **deps:** update dependency undici to v5.8.2 ([#844](https://github.com/codecov/uploader/issues/844)) ([469c64b](https://github.com/codecov/uploader/commit/469c64b560f62066d7c48370a8f093286ab76ff6))
+* **deps:** update dependency undici to v5.9.1 ([#854](https://github.com/codecov/uploader/issues/854)) ([0e6c734](https://github.com/codecov/uploader/commit/0e6c734109c78ca4ed746a05a1ff9be24b33c361))
+* **deps:** update dependency yargs to v17.4.1 ([d0d9548](https://github.com/codecov/uploader/commit/d0d95483cc1aa5a7da86969af3f42d7824d280ef))
+* **deps:** update dependency yargs to v17.5.0 ([5911bb5](https://github.com/codecov/uploader/commit/5911bb541a0474cbeb6ad01b095f154a0ea0b7dd))
+* **deps:** update dependency yargs to v17.5.1 ([#764](https://github.com/codecov/uploader/issues/764)) ([fe181a2](https://github.com/codecov/uploader/commit/fe181a210765f6c6e6ddfe7c29c933b4e1329909))
+* increase maxBuffer of spawnSync ([c121446](https://github.com/codecov/uploader/commit/c12144697e95051b061488feae60db4b98d600c2))
+* parse both versions of ssh urls for remotes ([#793](https://github.com/codecov/uploader/issues/793)) ([84df6d1](https://github.com/codecov/uploader/commit/84df6d138c97db110d73345a74f97bca9a904d96))
+* store upload file contents on a Buffer ([0209be2](https://github.com/codecov/uploader/commit/0209be276dc9df75b41da8436f5d7209ae368a11))
+* suppress errors during glob for files ([#855](https://github.com/codecov/uploader/issues/855)) ([f8d7a3a](https://github.com/codecov/uploader/commit/f8d7a3a82034a3138aa4d9ddc99f7d9fa17d8dc9))
+* throw error when flags do not match pattern ([#831](https://github.com/codecov/uploader/issues/831)) ([cf2585c](https://github.com/codecov/uploader/commit/cf2585cef6ae72f1ac8fc0fba9ec645ae2750d7e)), closes [#829](https://github.com/codecov/uploader/issues/829) [#835](https://github.com/codecov/uploader/issues/835)
+* typo ([#812](https://github.com/codecov/uploader/issues/812)) ([3b2e37d](https://github.com/codecov/uploader/commit/3b2e37d290e429e7d12210e7e8dd56674f089a3c))
+
+### [0.2.5](https://github.com/codecov/uploader/compare/v0.2.4...v0.2.5) (2022-08-01)
+
+
+### Features
+
+* add gcov executable ([#794](https://github.com/codecov/uploader/issues/794)) ([fecf6b4](https://github.com/codecov/uploader/commit/fecf6b401ea44dcb14f52820107f23170c21709a))
+* ignore files ending in .*js ([#798](https://github.com/codecov/uploader/issues/798)) ([1cd0d23](https://github.com/codecov/uploader/commit/1cd0d23322988a9af7f06d7fd8681ce4e5558b5c))
+
+
+### Bug Fixes
+
+* **deps:** pin dependency undici to 5.5.1 ([#806](https://github.com/codecov/uploader/issues/806)) ([894b823](https://github.com/codecov/uploader/commit/894b8233d0b92694d5f21df8145b908ffb180524))
+* **deps:** update dependency https-proxy-agent to v5.0.1 ([90a68c0](https://github.com/codecov/uploader/commit/90a68c021b0cc7f098fb644934b1d29771e4fd88))
+* **deps:** update dependency undici to v5.2.0 ([e7fb541](https://github.com/codecov/uploader/commit/e7fb54164013773066c144140344dcd5f88b0eba))
+* **deps:** update dependency undici to v5.4.0 ([#777](https://github.com/codecov/uploader/issues/777)) ([9ff8396](https://github.com/codecov/uploader/commit/9ff83961ca0e09acf4d0f137ad9d65e5f4089f4d))
+* **deps:** update dependency undici to v5.5.1 ([#804](https://github.com/codecov/uploader/issues/804)) ([ef52c46](https://github.com/codecov/uploader/commit/ef52c46ac47eb0011e7ae112e516f86a999f9217))
+* **deps:** update dependency undici to v5.6.0 ([#819](https://github.com/codecov/uploader/issues/819)) ([ac8eed9](https://github.com/codecov/uploader/commit/ac8eed9c0ceca1ce9ee8db41b4d0d73b9782dc01))
+* **deps:** update dependency undici to v5.8.0 ([#826](https://github.com/codecov/uploader/issues/826)) ([948d38d](https://github.com/codecov/uploader/commit/948d38d662708f0e885e5b0b9093b07c3db6f87f))
+* **deps:** update dependency yargs to v17.4.1 ([d0d9548](https://github.com/codecov/uploader/commit/d0d95483cc1aa5a7da86969af3f42d7824d280ef))
+* **deps:** update dependency yargs to v17.5.0 ([5911bb5](https://github.com/codecov/uploader/commit/5911bb541a0474cbeb6ad01b095f154a0ea0b7dd))
+* **deps:** update dependency yargs to v17.5.1 ([#764](https://github.com/codecov/uploader/issues/764)) ([fe181a2](https://github.com/codecov/uploader/commit/fe181a210765f6c6e6ddfe7c29c933b4e1329909))
+* increase maxBuffer of spawnSync ([c121446](https://github.com/codecov/uploader/commit/c12144697e95051b061488feae60db4b98d600c2))
+* parse both versions of ssh urls for remotes ([#793](https://github.com/codecov/uploader/issues/793)) ([84df6d1](https://github.com/codecov/uploader/commit/84df6d138c97db110d73345a74f97bca9a904d96))
+* store upload file contents on a Buffer ([0209be2](https://github.com/codecov/uploader/commit/0209be276dc9df75b41da8436f5d7209ae368a11))
+* throw error when flags do not match pattern ([#831](https://github.com/codecov/uploader/issues/831)) ([cf2585c](https://github.com/codecov/uploader/commit/cf2585cef6ae72f1ac8fc0fba9ec645ae2750d7e)), closes [#829](https://github.com/codecov/uploader/issues/829) [#835](https://github.com/codecov/uploader/issues/835)
+* typo ([#812](https://github.com/codecov/uploader/issues/812)) ([3b2e37d](https://github.com/codecov/uploader/commit/3b2e37d290e429e7d12210e7e8dd56674f089a3c))
+
 ### [0.2.4](https://github.com/codecov/uploader/compare/v0.2.0...v0.2.4) (2022-06-10)
 
 
@@ -21,7 +370,7 @@ All notable changes to this project will be documented in this file. See [standa
 * increase maxBuffer of spawnSync ([c121446](https://github.com/codecov/uploader/commit/c12144697e95051b061488feae60db4b98d600c2))
 * store upload file contents on a Buffer ([0209be2](https://github.com/codecov/uploader/commit/0209be276dc9df75b41da8436f5d7209ae368a11))
 
-### [0.2.3](https://github.com/codecov/uploader/compare/v0.2.0...v0.2.3) (2022-05-17)
+### [0.2.3](https://github.com/codecov/uploader/compare/v0.2.2...v0.2.3) (2022-05-17)
 
 
 ### Bug Fixes
@@ -54,7 +403,7 @@ All notable changes to this project will be documented in this file. See [standa
 * store upload file contents on a Buffer ([0209be2](https://github.com/codecov/uploader/commit/0209be276dc9df75b41da8436f5d7209ae368a11))
 * fix coveragepy autorun ([0773002](https://github.com/codecov/uploader/commit/0773002388faad66cf155ef36d968d718c03cd87))
 
-### [0.2.0](https://github.com/codecov/uploader/compare/v0.1.21...v0.2.0) (2022-04-21)
+### [0.2.0](https://github.com/codecov/uploader/compare/v0.1.22...v0.2.0) (2022-04-21)
 
 
 ### Features

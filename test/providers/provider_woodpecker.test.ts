@@ -13,28 +13,28 @@ describe('Woodpecker Params', () => {
     it('does not run without Woodpecker env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerWoodpecker.detect(inputs.environment)
+      const detected = providerWoodpecker.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with Woodpecker env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'woodpecker',
         },
       }
-      const detected = providerWoodpecker.detect(inputs.environment)
+      const detected = providerWoodpecker.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params', () => {
+  it('gets correct params', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'woodpecker',
         CI_COMMIT_BRANCH: 'master',
         CI_COMMIT_SHA: 'testingsha',
@@ -54,14 +54,14 @@ describe('Woodpecker Params', () => {
       service: 'woodpecker',
       slug: 'testOrg/testRepo',
     }
-    const params = providerWoodpecker.getServiceParams(inputs)
+    const params = await providerWoodpecker.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
-  
-  it('gets correct params for pull request', () => {
+
+  it('gets correct params for pull request', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'woodpecker',
         CI_COMMIT_BRANCH: 'master',
         CI_COMMIT_SOURCE_BRANCH: 'new-feature',
@@ -83,7 +83,7 @@ describe('Woodpecker Params', () => {
       service: 'woodpecker',
       slug: 'testOrg/testRepo',
     }
-    const params = providerWoodpecker.getServiceParams(inputs)
+    const params = await providerWoodpecker.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

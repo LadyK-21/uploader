@@ -1,10 +1,10 @@
 import td from 'testdouble'
 import childProcess from 'child_process'
-import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/util'
+import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/constants'
 import { IServiceParams, UploaderInputs } from '../../src/types'
 import { createEmptyArgs } from '../test_helpers'
 
-import * as providerBitrise from '../../src/ci_providers//provider_bitrise'
+import * as providerBitrise from '../../src/ci_providers/provider_bitrise'
 
 describe('Bitrise Params', () => {
   afterEach(() => {
@@ -15,41 +15,41 @@ describe('Bitrise Params', () => {
     it('does not run without Bitrise env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerBitrise.detect(inputs.environment)
+      const detected = providerBitrise.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does not run with only CI env variable', () => {
       const inputs: UploaderInputs= {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
         },
       }
-      const detected = providerBitrise.detect(inputs.environment)
+      const detected = providerBitrise.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('runs with Bitrise env variables', () => {
       const inputs: UploaderInputs= {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           BITRISE_IO: 'true',
           CI: 'true',
         },
       }
-      const detected = providerBitrise.detect(inputs.environment)
+      const detected = providerBitrise.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
   // This should test that the provider outputs proper default values
-  it('gets the correct params on no env variables', () => {
+  it('gets the correct params on no env variables', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         BITRISE_IO: 'true',
         CI: 'true',
       },
@@ -67,17 +67,17 @@ describe('Bitrise Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: '' })
+    ).thenReturn({ stdout: Buffer.from('') })
 
-    const params = providerBitrise.getServiceParams(inputs)
+    const params = await providerBitrise.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
   // This should test that the provider outputs proper parameters when a push event is created
-  it('gets the correct params on push', () => {
+  it('gets the correct params on push', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         BITRISE_BUILD_NUMBER: '2',
         BITRISE_BUILD_URL: 'https://bitrise.com/testOrg/testRepo/2',
         BITRISE_GIT_BRANCH: 'main',
@@ -99,15 +99,15 @@ describe('Bitrise Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'https://github.com/testOrg/testRepo.git' })
-    const params = providerBitrise.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('https://github.com/testOrg/testRepo.git') })
+    const params = await providerBitrise.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets the correct params on pr', () => {
+  it('gets the correct params on pr', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         BITRISE_BUILD_NUMBER: '2',
         BITRISE_BUILD_URL: 'https://bitrise.com/testOrg/testRepo/2',
         BITRISE_GIT_BRANCH: 'main',
@@ -130,13 +130,13 @@ describe('Bitrise Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'https://github.com/testOrg/testRepo.git' })
-    const params = providerBitrise.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('https://github.com/testOrg/testRepo.git') })
+    const params = await providerBitrise.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
   // This should test that the provider outputs proper parameters when given overrides
-  it('gets the correct params on overrides', () => {
+  it('gets the correct params on overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -148,7 +148,7 @@ describe('Bitrise Params', () => {
           slug: 'neworg/newRepo',
         },
       },
-      environment: {
+      envs: {
         BITRISE_BUILD_NUMBER: '2',
         BITRISE_BUILD_URL: 'https://bitrise.com/testOrg/testRepo/2',
         BITRISE_GIT_BRANCH: 'main',
@@ -171,8 +171,8 @@ describe('Bitrise Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'https://github.com/testOrg/testRepo.git' })
-    const params = providerBitrise.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('https://github.com/testOrg/testRepo.git') })
+    const params = await providerBitrise.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

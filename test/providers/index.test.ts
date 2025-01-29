@@ -28,6 +28,7 @@ describe('CI Providers', () => {
 
     describe(`${provider.getServiceName()} can return a ISeviceParams object that`, () => {
       const inputs: UploaderInputs = {
+        envs: {},
         args: {
           ...createEmptyArgs(),
           ...{
@@ -35,17 +36,17 @@ describe('CI Providers', () => {
             slug: 'testOrg/testRepo',
           },
         },
-        environment: {},
       }
 
-      const serviceParams = provider.getServiceParams(inputs)
-      expect(serviceParams).not.toBeNull()
-
-      it('has a sha', () => {
+      it('has a sha', async () => {
+        const serviceParams = await provider.getServiceParams(inputs)
+        expect(serviceParams).not.toBeNull()
         expect(serviceParams.commit).toEqual(inputs.args.sha)
       })
 
-      it('has a slug', () => {
+      it('has a slug', async () => {
+        const serviceParams = await provider.getServiceParams(inputs)
+        expect(serviceParams).not.toBeNull()
         expect(serviceParams.slug).toEqual(inputs.args.slug)
       })
     })

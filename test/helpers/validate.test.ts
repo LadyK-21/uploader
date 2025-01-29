@@ -1,9 +1,4 @@
 import * as validate from '../../src/helpers/validate'
-import { DEFAULT_UPLOAD_HOST } from '../../src/helpers/constansts'
-import Module from 'module'
-
-// Backup the env
-const realEnv = { ...process.env }
 
 describe('Input Validators', () => {
   describe('Tokens', () => {
@@ -35,18 +30,35 @@ describe('Input Validators', () => {
 
   describe('Flags', () => {
     it('Should pass without a dash', () => {
-      expect(validate.validateFlags('moo')).toBe(true)
+      expect(validate.isValidFlag('moo')).toBe(true)
     })
     it('Should pass with a dash', () => {
-      expect(validate.validateFlags('moo-foor')).toBe(true)
+      expect(validate.isValidFlag('moo-foor')).toBe(true)
     })
 
     it('Should pass with a period in the middle', () => {
-      expect(validate.validateFlags('moo.foor')).toBe(true)
+      expect(validate.isValidFlag('moo.foor')).toBe(true)
     })
 
     it('Should pass with a dash at the start', () => {
-      expect(validate.validateFlags('-moo-foor')).toBe(true)
+      expect(validate.isValidFlag('-moo-foor')).toBe(true)
+    })
+
+    it('Should pass with a long name and special characters', () => {
+      expect(validate.isValidFlag('uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^')).toBe(true)
+    })
+
+    it('Should throw with a name longer than 1024 characters', () => {
+      expect(validate.isValidFlag('uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^uu-thisnameis-ridculouslylong-javascrip-but-thisisareally-longnamethatisgoing-tobe-supported-withmanymanycharacters-andthisflagname-istoolongto-dispaly-intheui1234567891011121314151617181920212222324252627282829201212-thisnameis$%#%&^')).toBe(false)
+    })
+
+    it("should throw when they they not match the pattern", () => {
+      // arrange
+      const invalidFlagName = "flag'subflag"
+
+      const expectedErrorMessage = "Flags cannot contain the ' or \" characters and cannot exceed 1024 characters. Received flag'subflag"
+      // act
+      expect(() => validate.validateFlags([invalidFlagName])).toThrowError(expectedErrorMessage)
     })
   })
 
@@ -65,6 +77,32 @@ describe('Input Validators', () => {
       expect(
         validate.validateSHA('1732d84b7ef2425e979d6034a3e3bb5633da344a'),
       ).toBe(true)
+    })
+  })
+
+  describe('checkSlug()', () => {
+    it('should return true for a slug with a forward slash', () => {
+      // arrange
+      const inputSlug = "testOrg/testRepo"
+      const expectedResult = true
+
+      // act
+      const result = validate.checkSlug(inputSlug)
+
+      // assert
+      expect(result).toEqual(expectedResult)
+    })
+
+    it('should return false for a slug without a forward slash', () => {
+      // arrange
+      const inputSlug = 'testRepo'
+      const expectedResult = false
+
+      // act
+      const result = validate.checkSlug(inputSlug)
+
+      // assert
+      expect(result).toEqual(expectedResult)
     })
   })
 })

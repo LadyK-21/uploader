@@ -8,13 +8,6 @@
   "reviewers": [
     "codecov/open-source"
   ],
-  "packageRules": [
-    {
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "devDependencies (non-major)"
-    }
-  ],
   "circleci" : {
     "pinDigests": true
   }

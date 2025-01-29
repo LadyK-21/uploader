@@ -2,7 +2,7 @@ import td from 'testdouble'
 import childProcess from 'child_process'
 
 import * as providerTeamCity from '../../src/ci_providers/provider_teamcity'
-import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/util'
+import { SPAWNPROCESSBUFFERSIZE } from '../../src/helpers/constants'
 import { IServiceParams, UploaderInputs } from '../../src/types'
 import { createEmptyArgs } from '../test_helpers'
 
@@ -15,29 +15,29 @@ describe('TeamCity Params', () => {
     it('does not run without TeamCity env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerTeamCity.detect(inputs.environment)
+      const detected = providerTeamCity.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with TeamCity env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
           TEAMCITY_VERSION: 'true',
         },
       }
-      const detected = providerTeamCity.detect(inputs.environment)
+      const detected = providerTeamCity.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params', () => {
+  it('gets correct params', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'true',
         TEAMCITY_VERSION: 'true',
         BRANCH_NAME: 'main',
@@ -58,15 +58,15 @@ describe('TeamCity Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: '' })
-    const params = providerTeamCity.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('') })
+    const params = await providerTeamCity.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct params and remote slug', () => {
+  it('gets correct params and remote slug', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'true',
         TEAMCITY_VERSION: 'true',
         BRANCH_NAME: 'main',
@@ -87,12 +87,12 @@ describe('TeamCity Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: 'https://github.com/testOrg/testRepo.git' })
-    const params = providerTeamCity.getServiceParams(inputs)
+    ).thenReturn({ stdout: Buffer.from('https://github.com/testOrg/testRepo.git') })
+    const params = await providerTeamCity.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 
-  it('gets correct params for overrides', () => {
+  it('gets correct params for overrides', async () => {
     const inputs: UploaderInputs = {
       args: {
         ...createEmptyArgs(),
@@ -104,7 +104,7 @@ describe('TeamCity Params', () => {
           slug: 'testOrg/testRepo',
         },
       },
-      environment: {
+      envs: {
         CI: 'true',
         TEAMCITY_VERSION: 'true',
         BRANCH_NAME: 'main',
@@ -115,7 +115,7 @@ describe('TeamCity Params', () => {
     const spawnSync = td.replace(childProcess, 'spawnSync')
     td.when(
       spawnSync('git', ['config', '--get', 'remote.origin.url'], { maxBuffer: SPAWNPROCESSBUFFERSIZE }),
-    ).thenReturn({ stdout: '' })
+    ).thenReturn({ stdout: Buffer.from('') })
     const expected: IServiceParams = {
       branch: 'branch',
       build: '3',
@@ -127,7 +127,7 @@ describe('TeamCity Params', () => {
       slug: 'testOrg/testRepo',
     }
 
-    const params = providerTeamCity.getServiceParams(inputs)
+    const params = await providerTeamCity.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })

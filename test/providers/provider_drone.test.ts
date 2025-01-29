@@ -13,29 +13,29 @@ describe('Drone Params', () => {
     it('does not run without Drone env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {},
+        envs: {},
       }
-      const detected = providerDrone.detect(inputs.environment)
+      const detected = providerDrone.detect(inputs.envs)
       expect(detected).toBeFalsy()
     })
 
     it('does run with Drone env variable', () => {
       const inputs: UploaderInputs = {
         args: { ...createEmptyArgs() },
-        environment: {
+        envs: {
           CI: 'true',
           DRONE: 'true',
         },
       }
-      const detected = providerDrone.detect(inputs.environment)
+      const detected = providerDrone.detect(inputs.envs)
       expect(detected).toBeTruthy()
     })
   })
 
-  it('gets correct params', () => {
+  it('gets correct params', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'true',
         DRONE: 'true',
         DRONE_BRANCH: 'master',
@@ -56,14 +56,14 @@ describe('Drone Params', () => {
       service: 'drone.io',
       slug: 'testOrg/testRepo',
     }
-    const params = providerDrone.getServiceParams(inputs)
+    const params = await providerDrone.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
-  
-  it('gets correct params for DRONE_BUILD_URL', () => {
+
+  it('gets correct params for DRONE_BUILD_URL', async () => {
     const inputs: UploaderInputs = {
       args: { ...createEmptyArgs() },
-      environment: {
+      envs: {
         CI: 'true',
         DRONE: 'true',
         DRONE_BRANCH: 'master',
@@ -84,7 +84,7 @@ describe('Drone Params', () => {
       service: 'drone.io',
       slug: 'testOrg/testRepo',
     }
-    const params = providerDrone.getServiceParams(inputs)
+    const params = await providerDrone.getServiceParams(inputs)
     expect(params).toMatchObject(expected)
   })
 })
